@@ -2,7 +2,6 @@ import { useContext, useState } from "react";
 import "./login.scss";
 import { AuthContext } from "../../authContext/AuthContext";
 import { login } from "../../authContext/apiCalls";
-import Footer from "../footer/footer";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -45,7 +44,6 @@ export default function Login() {
           </small>
         </form>
       </div>
-      <Footer />
     </div>
   );
 }
