@@ -22,7 +22,10 @@ const UserSchema = new mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false
-    }
+    },
+    favorites: [
+        { type: mongoose.Schema.Types.ObjectId, ref: "Movie" }
+    ]
 }, { timestamps: true });
 
 module.exports = mongoose.model("User", UserSchema);

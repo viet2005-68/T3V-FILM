@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import "./product.css"
 import { useState } from "react";
 import { useContext } from "react";
@@ -7,6 +7,7 @@ import { updateMovie } from "../../context/movieContext/apiCalls";
 
 export default function Product() {
     const location = useLocation();
+    const navigate = useNavigate();
     const [movie, setMovie] = useState(location.state.movie);
     const { dispatch } = useContext(MovieContext);
 
@@ -18,6 +19,7 @@ export default function Product() {
     const handleUpdate = (e) => {
         e.preventDefault();
         updateMovie(movie, dispatch);
+        navigate("/movies");
     }
 
     return (
@@ -62,7 +64,24 @@ export default function Product() {
                         <label>Year</label>
                         <input type="text" name="year" placeholder={movie.year} onChange={handleChange} />
                         <label>Genre</label>
-                        <input type="text" name="genre" placeholder={movie.genre} onChange={handleChange} />
+                        {/* <input type="text" name="genre" placeholder={movie.genre} onChange={handleChange} /> */}
+                        <select name="genre" id="genre" value={movie.genre} onChange={handleChange}>
+                            <option >Genre</option>
+                            <option value="action">Action</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="comedy">Comedy</option>
+                            <option value="crime">Crime</option>
+                            <option value="fantasy">Fantasy</option>
+                            <option value="historical">Historical</option>
+                            <option value="horro">Horror</option>
+                            <option value="romance">Romance</option>
+                            <option value="sci-fi">Sci-fi</option>
+                            <option value="thriller">Thriller</option>
+                            <option value="western">Western</option>
+                            <option value="animation">Animation</option>
+                            <option value="drama">Drama</option>
+                            <option value="documentary">Documentary</option>
+                        </select>
                         <label>Limit</label>
                         <input type="text" name="limit" placeholder={movie.limit} onChange={handleChange} />
                         <label>Duration</label>
