@@ -51,7 +51,7 @@ router.delete("/:id", verify, async (req, res) => {
     }
 })
 
-//GET RANDOM
+//GET RANDOM (1 Movie)
 router.get("/random", verify, async (req, res) => {
     const type = req.query.type;
     let movie;
@@ -80,7 +80,20 @@ router.get("/random", verify, async (req, res) => {
     }
 })
 
-//GET
+// GET TOP MOVIES
+router.get("/top", async (req, res) => {
+    try {
+        const topMovies = await Movie.aggregate([
+            { $sample: { size: 10 } }
+        ]);
+        res.status(200).json(topMovies)
+    }
+    catch (err) {
+        res.status(500).json(err)
+    }
+})
+
+//GET 1 movie by ID
 router.get("/:id", verify, async (req, res) => {
     try {
         const movie = await Movie.findById(req.params.id);
@@ -92,15 +105,24 @@ router.get("/:id", verify, async (req, res) => {
 })
 
 //GET ALL 
+// To get all movies: call /api/movies/
+// To get movies filtered by genre: call /api/movies?genre=YOUR_MOVIE_GENRE
+// To get movies filtered by title: call /api/movies?title=YOUR_MOVIE_NAME
 router.get("/", verify, async (req, res) => {
+    const filter = {}
+    if (req.query.genre) {
+        filter.genre = req.query.genre
+    }
+    if (req.query.title) {
+        filter.title = { $regex: req.query.title, $options: "i" }
+    }
     try {
-        const movies = await Movie.find();
-        res.status(200).json(movies.reverse());
+        const movies = await Movie.find(filter)
+        res.status(200).json(movies.reverse())
     }
     catch (err) {
         res.status(500).json(err);
     }
 })
-
 
 module.exports = router;
