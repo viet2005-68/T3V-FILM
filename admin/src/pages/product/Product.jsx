@@ -65,6 +65,8 @@ export default function Product() {
                         <input type="text" name="genre" placeholder={movie.genre} onChange={handleChange} />
                         <label>Limit</label>
                         <input type="text" name="limit" placeholder={movie.limit} onChange={handleChange} />
+                        <label>Duration</label>
+                        <input type="text" name="duration" placeholder={movie.duration} onChange={handleChange} />
                         <label>Trailer</label>
                         <input type="text" name="trailer" placeholder={movie.trailer} onChange={handleChange} />
                         <label>Video</label>
