@@ -14,8 +14,7 @@ export default function Home({ type }) {
     const getRandomLists = async () => {
       try {
         const res = await axios.get(
-          `/api/lists${type ? "?type=" + type : ""}${
-            genre ? "&genre=" + genre : ""
+          `/api/lists${type ? "?type=" + type : ""}${genre ? "&genre=" + genre : ""
           }`,
           {
             headers: {
@@ -49,6 +48,8 @@ export default function Home({ type }) {
     getRandomLists();
     getAllMovie();
   }, [type, genre]);
+
+
   return (
     <div className="home">
       <Navbar />
