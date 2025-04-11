@@ -1,6 +1,9 @@
 const router = require("express").Router();
 const Movie = require("../models/Movie");
 const verify = require("../verifyToken");
+const reviewRoute = require('./reviews');
+
+router.use('/reviews', reviewRoute)
 
 //CREATE
 router.post("/", verify, async (req, res) => {
@@ -117,7 +120,7 @@ router.get("/", verify, async (req, res) => {
         filter.title = { $regex: req.query.title, $options: "i" }
     }
     try {
-        const movies = await Movie.find(filter)
+        const movies = await Movie.find(filter).populate("reviews.user", "username profilePic")
         res.status(200).json(movies.reverse())
     }
     catch (err) {
