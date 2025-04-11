@@ -87,8 +87,20 @@ router.get("/random", verify, async (req, res) => {
 router.get("/top", async (req, res) => {
     try {
         const topMovies = await Movie.aggregate([
-            { $sample: { size: 10 } }
-        ]);
+            {
+                $addFields: {
+                    avgRating: {
+                        $cond: [
+                            { $gt: [{ $size: '$reviews' }, 0] },
+                            { $avg: '$reviews.rating' },
+                            0
+                        ]
+                    }
+                }
+            },
+            { $sort: { avgRating: -1 } },
+            { $limit: 10 }
+        ])
         res.status(200).json(topMovies)
     }
     catch (err) {
@@ -111,6 +123,7 @@ router.get("/:id", verify, async (req, res) => {
 // To get all movies: call /api/movies/
 // To get movies filtered by genre: call /api/movies?genre=YOUR_MOVIE_GENRE
 // To get movies filtered by title: call /api/movies?title=YOUR_MOVIE_NAME
+// To get movies filtered by year: call /api/movies?year=YOUR_MOVIE_YEAR
 router.get("/", verify, async (req, res) => {
     const filter = {}
     if (req.query.genre) {
@@ -118,6 +131,9 @@ router.get("/", verify, async (req, res) => {
     }
     if (req.query.title) {
         filter.title = { $regex: req.query.title, $options: "i" }
+    }
+    if (req.query.year) {
+        filter.year = req.query.year
     }
     try {
         const movies = await Movie.find(filter).populate("reviews.user", "username profilePic")

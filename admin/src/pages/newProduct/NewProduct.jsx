@@ -51,7 +51,23 @@ export default function NewProduct() {
                 </div>
                 <div className="addProductItem">
                     <label>Genre</label>
-                    <input type="text" placeholder="genre" name="genre" onChange={handleChange} />
+                    <select name="genre" id="genre" onChange={handleChange}>
+                        <option >Genre</option>
+                        <option value="action">Action</option>
+                        <option value="adventure">Adventure</option>
+                        <option value="comedy">Comedy</option>
+                        <option value="crime">Crime</option>
+                        <option value="fantasy">Fantasy</option>
+                        <option value="historical">Historical</option>
+                        <option value="horro">Horror</option>
+                        <option value="romance">Romance</option>
+                        <option value="sci-fi">Sci-fi</option>
+                        <option value="thriller">Thriller</option>
+                        <option value="western">Western</option>
+                        <option value="animation">Animation</option>
+                        <option value="drama">Drama</option>
+                        <option value="documentary">Documentary</option>
+                    </select>
                 </div>
                 <div className="addProductItem">
                     <label>Duration</label>
