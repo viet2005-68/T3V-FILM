@@ -108,6 +108,24 @@ router.get("/top", async (req, res) => {
     }
 })
 
+//GET MOVIES STATS
+router.get("/stats", verify, async (req, res) => {
+    try {
+        const data = await Movie.aggregate([
+            {
+                $group: {
+                    _id: '$genre',
+                    total: { $sum: 1 }
+                }
+            }
+        ]);
+        res.status(200).json(data);
+    }
+    catch (err) {
+        res.status(500).json(err);
+    }
+})
+
 //GET 1 movie by ID
 router.get("/:id", verify, async (req, res) => {
     try {
