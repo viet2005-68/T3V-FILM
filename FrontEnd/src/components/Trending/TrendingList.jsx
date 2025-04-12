@@ -3,12 +3,12 @@ import TrendingCard from "../TrendingCard/TrendingCard";
 import "./TrendingList.scss";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-const TrendingList = ({ films }) => {
+import { AlternateEmail } from "@mui/icons-material";
+const TrendingList = ({ films, title }) => {
   const scrollRef = useRef();
   const [showButtons, setShowButtons] = useState(false);
-
   useEffect(() => {
-    setShowButtons(films.length > 7);
+    setShowButtons(films.length > 4);
   }, [films]);
 
   const scroll = (direction) => {
@@ -21,7 +21,7 @@ const TrendingList = ({ films }) => {
   };
   return (
     <div className="trending-list">
-      <h2>Hiện đang thịnh hành</h2>
+      <h2>{title}</h2>
       <div className="scroll-wrapper">
         {showButtons && (
           <button className="scroll-btn left" onClick={() => scroll("left")}>
@@ -30,7 +30,7 @@ const TrendingList = ({ films }) => {
         )}
         <div className="trending-scroll" ref={scrollRef}>
           {films.map((film, index) => (
-            <TrendingCard key={film.id} film={film} index={index} />
+            <TrendingCard key={film.id} filmId={film._id} index={index} />
           ))}
         </div>
         {showButtons && (
