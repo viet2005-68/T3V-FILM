@@ -36,7 +36,7 @@ const TrendingCard = ({ filmId, index }) => {
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
-      <Link to={{ pathname: "/watch" }} state={{ movie: film }}>
+      <Link to={{ pathname: "/movie" }} state={{ movie: film }}>
         <div className={`trending-card ${isHover ? "hovered" : ""}`}>
           <img src={film.imgSm} alt={film.title} />
           <div className="card-rank">{index + 1}</div>

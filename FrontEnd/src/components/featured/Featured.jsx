@@ -3,6 +3,7 @@ import "./featured.scss";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import FilmInfo from "../filmInfo/FilmInfo";
+import { Link } from "react-router-dom";
 
 export default function Featured({ type, setGenre }) {
   const [content, setContent] = useState({});
@@ -59,13 +60,15 @@ export default function Featured({ type, setGenre }) {
           <img src={content.imgTitle} />
           <span className="desc">{content.desc}</span>
           <div className="buttons">
-            <button className="play">
-              <PlayArrow />
-              <span>Play</span>
-            </button>
-            <button className="more">
+            <Link className="link" to={{ pathname: "/watch" }} state={{ movie: content }}>
+              <button className="play">
+                <PlayArrow />
+                <span>Play</span>
+              </button>
+            </Link>
+            <button onClick={() => setShowDetail(true)} className="more">
               <InfoOutlined />
-              <span onClick={() => setShowDetail(true)}>Info</span>
+              <span>Info</span>
             </button>
           </div>
         </div>

@@ -11,6 +11,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AuthContext } from "./authContext/AuthContext.jsx";
+import Movie from "./pages/movie/Movie.jsx";
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -31,6 +32,11 @@ function App() {
             user ? <Home type={"series"} /> : <Navigate to="/register" />
           }
         />
+        <Route
+          path="/movie"
+          element={user ? <Movie /> : <Navigate to="/register" />}
+        >
+        </Route>
         <Route
           path="/watch"
           element={user ? <Watch /> : <Navigate to="/register" />}
