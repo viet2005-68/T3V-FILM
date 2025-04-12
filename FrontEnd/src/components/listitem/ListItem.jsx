@@ -30,41 +30,43 @@ export default function ListItem({ index, item }) {
   }, [item]);
 
   return (
-    <Link to={{ pathname: "/watch" }} state={{ movie: movie }}>
-      <div
-        className="listItem"
-        style={{ left: isHover && index * 225 + index * 2.5 }}
-        onMouseEnter={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
-      >
-        <img src={movie.imgSm} />
-        {isHover && (
-          <>
-            {/* <video src={movie.trailer} autoPlay={true} loop /> */}
-            <iframe
-              src={movie.trailer}
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
-            <div className="itemInfo">
-              <div className="icons">
-                <PlayArrow className="icon" />
-                <Add className="icon" />
-                <ThumbUpOutlined className="icon" />
-                <ThumbDownOutlined className="icon" />
+    <div
+      className="listItemWrapper"
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+    >
+      <Link to={{ pathname: "/watch" }} state={{ movie: movie }}>
+        <div
+          className="listItem"
+        >
+          {!isHover && <img src={movie.img} />}
+          {isHover && (
+            <>
+              <iframe
+                src={movie.trailer}
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+              <div className="itemInfo">
+                <div className="icons">
+                  <PlayArrow className="icon" />
+                  <Add className="icon" />
+                  <ThumbUpOutlined className="icon" />
+                  <ThumbDownOutlined className="icon" />
+                </div>
+                <div className="itemInfoTop">
+                  <span>{movie.duration}</span>
+                  <span className="limit">+{movie.limit}</span>
+                  <span>{movie.year}</span>
+                </div>
+                <div className="desc">{movie.desc}</div>
+                <div className="genre">{movie.genre}</div>
               </div>
-              <div className="itemInfoTop">
-                <span>{movie.duration}</span>
-                <span className="limit">+{movie.limit}</span>
-                <span>{movie.year}</span>
-              </div>
-              <div className="desc">{movie.desc}</div>
-              <div className="genre">{movie.genre}</div>
-            </div>
-          </>
-        )}
-      </div>
-    </Link>
+            </>
+          )}
+        </div>
+      </Link >
+    </div>
   );
 }
