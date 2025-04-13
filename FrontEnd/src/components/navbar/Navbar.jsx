@@ -16,7 +16,7 @@ export default function Navbar() {
     <div className={isScrolled ? "navbar scrolled" : "navbar"}>
       <div className="container">
         <div className="left">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/1200px-Netflix_2015_logo.svg.png" />
+          <img src="https://freeimghost.net/images/2025/04/13/favicon.png" alt="favicon" border="0" />
           <Link to="/" className="link">
             <span>Homepage</span>
           </Link>
@@ -30,7 +30,7 @@ export default function Navbar() {
           <span>My list</span>
         </div>
         <div className="right">
-          <Search className="icon" />
+          <Search className="icon"/>
           <span>KID</span>
           <Notifications className="icon" />
           <img src={JSON.parse(localStorage.getItem("user")).profilePic} />

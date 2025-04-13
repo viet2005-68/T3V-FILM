@@ -21,12 +21,25 @@ function Header({query}) {
     );
 }
 
-function Tab() {
-    return (<div className="row-tabs-container">
-        <a className="active">Phim</a>
-        <a>Diễn viên</a>
-    </div>)
+function Tab({ selectedTab, onTabChange }) {
+    return (
+        <div className="row-tabs-container">
+            <a
+                className={selectedTab === "movies" ? "active" : ""}
+                onClick={() => onTabChange("movies")}
+            >
+                Phim
+            </a>
+            <a
+                className={selectedTab === "actors" ? "active" : ""}
+                onClick={() => onTabChange("actors")}
+            >
+                Diễn viên
+            </a>
+        </div>
+    );
 }
+
 
 
 export default function Search({type}) {
@@ -36,6 +49,7 @@ export default function Search({type}) {
     const [allMovie, setAllMovie] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [selectedTab, setSelectedTab] = useState("movies");
 
     const moviesPerPage = 8;
 
@@ -82,7 +96,7 @@ export default function Search({type}) {
         <Navbar/>
         <div className="search-content">
             <Header query={query}/>
-            <Tab/>
+            <Tab selectedTab={selectedTab} onTabChange={setSelectedTab} />
             <div className="tab-content">
                 <Filter/>
                 <Box
