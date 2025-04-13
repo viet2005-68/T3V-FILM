@@ -78,7 +78,6 @@ export default function Search() {
     }, [searchQuery]);
 
     useEffect(() => {
-
         const getAllMovie = async () => {
             try {
                 const res = await axios.get("/api/movies", {
@@ -93,7 +92,6 @@ export default function Search() {
             }
         };
 
-        getRandomLists();
         getAllMovie();
     }, []);
     const handleChangePage = (event, newPage) => {
