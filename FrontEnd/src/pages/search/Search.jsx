@@ -96,8 +96,7 @@ export default function Search({type}) {
         <Navbar/>
         <div className="search-content">
             <Header query={query}/>
-            <Tab selectedTab={selectedTab} onTabChange={setSelectedTab} />
-            <div className="tab-content">
+           <div className="tab-content">
                 <Filter/>
                 <Box
                     sx={{

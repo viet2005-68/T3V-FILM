@@ -5,6 +5,11 @@
   flex-shrink: 0;
   margin-right: 20px;
   overflow: visible;
+  z-index: 10;
+
+  &:hover {
+    z-index: 10000; // Khi hover, wrapper sẽ nằm trên các wrapper khác
+  }
 }
 
 .trending-card {
@@ -13,16 +18,31 @@
   width: 100%;
   height: 100%;
   border-radius: 8px;
-  overflow: hidden; /* Chỉ để hidden khi không hover */
+  overflow: hidden;
   background-color: #111;
-  transition: all 0.3s ease; /* Thay đổi từ transform sang all */
-  z-index: 1;
+  transition: all 0.3s ease;
+  z-index: 0;
 
   img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: -999;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
     transition: opacity 0.3s ease;
   }
 
@@ -34,20 +54,6 @@
     font-weight: bold;
     z-index: 2;
     color: white;
-  }
-
-  iframe {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 0;
-    pointer-events: none;
   }
 
   .itemInfo {
@@ -62,7 +68,7 @@
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.3s ease;
-    z-index: 2;
+    z-index: 3;
 
     .icons {
       display: flex;
@@ -118,25 +124,35 @@
 
   &.hovered {
     position: absolute;
-    top: -80px;
-    left: -50px;
+    top: -100px;
+    left: -60px;
     width: 350px;
     height: 380px;
     transform: none;
-    z-index: 1000;
+    z-index: 10000;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
     transition: all 0.3s ease;
+    pointer-events: auto;
 
     img {
       opacity: 0;
     }
 
+    iframe {
+      pointer-events: auto;
+      opacity: 1;
+      z-index: 2;
+    }
+
     .itemInfo {
       opacity: 1;
       transform: translateX(-10px);
+      z-index: 3;
     }
 
     .desc {
+      position: relative;
+      z-index: 3;
       padding: 10px;
       text-align: justify;
       max-width: 300px;
@@ -147,15 +163,12 @@
       text-overflow: ellipsis;
       overflow: hidden;
     }
-
-    &::after {
-      right: 0;
-      top: 0;
-    }
   }
+
   .hover-trending {
     display: flex;
     flex-direction: column;
+
     iframe {
       display: block;
       opacity: 1;
