@@ -1,4 +1,4 @@
-import "./moviecard.scss";
+import "./searchcard.scss";
 import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import Button from "@mui/material/Button";
@@ -87,7 +87,7 @@ function Popup({ movie }) {
   );
 }
 
-export default function MovieCard({movieId, index}) {
+export default function SearchCard({movieId, index}) {
   const [movie, setMovie] = useState({});
 
   useEffect(() => {
@@ -108,8 +108,8 @@ export default function MovieCard({movieId, index}) {
     getMovie();
   }, [movieId]);
   return (
-    <div className="movie-card-wrapper">
-      <div className="movie-card">
+    <div className="search-card-wrapper">
+      <div className="search-card">
         <img
           className="movie-thumbnail"
           src={movie.imgSm}

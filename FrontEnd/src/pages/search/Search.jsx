@@ -1,7 +1,7 @@
 import Navbar from "../../components/navbar/Navbar.jsx";
 import List from "../../components/List/List.jsx";
 import Filter from "../../components/Filter/Filter.jsx";
-import MovieCard from "../../components/MovieCard/MovieCard.jsx";
+import SearchCard from "../../components/SearchCard/SearchCard.jsx";
 import {MdManageSearch} from "react-icons/md";
 import {TablePagination, Box} from "@mui/material";
 import {useEffect, useState} from "react";
@@ -95,14 +95,14 @@ export default function Search({type}) {
                             lg: "repeat(4, 1fr)",    // desktop: 4 cột
                             xl: "repeat(5, 1fr)",    // màn lớn: 5 cột
                         },
-                        gap: 2,
+                        rowGap: 0,
                     }}
                 >
                     {allMovie
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((movie, index) => (
                             <Box key={movie._id} sx={{ overflow: "visible" }}>
-                                <MovieCard key={movie.id} movieId={movie._id} index={index} />
+                                <SearchCard key={movie.id} movieId={movie._id} index={index} />
                             </Box>
                         ))}
                 </Box>

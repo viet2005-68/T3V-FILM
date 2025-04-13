@@ -1,6 +1,6 @@
-.movie-card-wrapper {
+.search-card-wrapper {
     position: relative;
-    width: 225px;
+    width: 100%;
     height: 300px;
     overflow: visible !important;
     border-radius: 5px;
@@ -10,11 +10,11 @@
     gap: .75rem;
     display: flex;
     flex-direction: column;
-
-    .movie-card {
+    .search-card {
         display: flex;
         flex-direction: column;
         gap: .75rem;
+        margin: 1rem;
         .movie-thumbnail {
             width: 100%;
             height: 200px;
@@ -25,6 +25,7 @@
         h3 {
             font-size: 18px;
             margin-bottom: 8px;
+            color: white;
         }
     }
 
@@ -36,7 +37,7 @@
         .movie-popup {
             visibility: visible;
             opacity: 1;
-            transform: translateX(-30%) scale(1);
+            transform: translateX(-50%) scale(1);
         }
     }
 
