@@ -12,6 +12,12 @@
     padding: 0.5rem 1rem;
     border-radius: 0.3rem;
     cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #292c38;
+    }
   }
 
   .filter-elements {
@@ -19,56 +25,72 @@
     border-radius: 0.75rem;
     padding: 1rem;
     display: none;
+    width: fit-content;
+    max-width: 100%;
 
     &.show {
       display: block;
     }
 
-    .fe-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 1rem 0;
-      border-bottom: 1px solid #fff;
+    // Style chung cho MUI Select
+    .MuiFormControl-root {
+      min-width: 140px;
 
-      .fe-name {
-        width: 120px;
-        text-align: right;
-        color: #fff;
-        font-weight: 500;
+      .MuiInputLabel-root {
+        color: white;
       }
 
-      .fe-results {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.6rem;
-
-        .item {
-          padding: 0.3rem 0.8rem;
-          color: #fff;
-          border: 1px solid transparent;
-          cursor: pointer;
-          transition: 0.3s;
-          border-radius: 5px;
-          background-color: transparent;
-
-          &:hover {
-            border-color: #fff;
-          }
-
-          &.active-btn {
-            border-color: red;
-            background-color: rgba(255, 0, 0, 0.78);
-          }
+      .MuiOutlinedInput-root {
+        color: white;
+        fieldset {
+          border-color: rgba(255, 255, 255, 0.4);
         }
+
+        &:hover fieldset {
+          border-color: white;
+        }
+
+        &.Mui-focused fieldset {
+          border-color: red;
+        }
+      }
+
+      .MuiSelect-icon {
+        color: white;
+      }
+
+      .MuiMenuItem-root {
+        color: black; // dropdown item
+      }
+    }
+
+    // Responsive style
+    @media (max-width: 600px) {
+      .MuiFormControl-root {
+        width: 100%;
       }
     }
   }
-  .filter-btn{
+
+  .filter-btn {
     background-color: red;
     border-radius: 5px;
+    color: white;
+    font-weight: 500;
+
+    &:hover {
+      background-color: darkred;
+    }
   }
-  .reset-btn{
+
+  .reset-btn {
     border-color: red;
     color: red;
+    font-weight: 500;
+
+    &:hover {
+      border-color: darkred;
+      color: darkred;
+    }
   }
 }
