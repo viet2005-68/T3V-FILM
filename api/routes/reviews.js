@@ -3,7 +3,7 @@ const router = require('express').Router()
 const verify = require("../verifyToken");
 
 //ADD REVIEWS TO MOVIE
-// body: {comment: ..., rating: ..., userId: ...}
+// body: {comment: ..., rating: ..., user: ...}
 router.put("/:id", verify, async (req, res) => {
     try {
         const review = req.body;

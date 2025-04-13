@@ -3,11 +3,15 @@ import { useLocation } from "react-router-dom"
 import Navbar from "../../components/navbar/Navbar"
 import { FavoriteBorder, Favorite, PlayArrow, Add, Share, Stars, Comment, Notes, PlayArrowOutlined } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import ReviewPanel from "../../components/ReviewPanel/ReviewPanel";
+import { useState } from "react";
+import axios from "axios";
 
 export default function Movie() {
+    const [reviewOpen, setReviewOpen] = useState(false)
     const location = useLocation()
-    const movie = location.state.movie
-    console.log(movie)
+    const [movie, setMovie] = useState(location.state.movie)
+
     const calculateRating = (reviews) => {
         let avg = 0
         for (let review of reviews) {
@@ -16,11 +20,35 @@ export default function Movie() {
         return avg / (reviews.length !== 0 ? reviews.length : 1)
     }
 
+    const submitReview = async (review) => {
+        try {
+            const res = await axios.put(`/api/movies/reviews/${movie._id}`, review, {
+                headers: {
+                    token:
+                        "Bearer " +
+                        JSON.parse(localStorage.getItem("user")).accessToken,
+                }
+            })
+            const movieRes = await axios.get(`/api/movies/${movie._id}`, {
+                headers: {
+                    token:
+                        "Bearer " +
+                        JSON.parse(localStorage.getItem("user")).accessToken,
+                }
+            })
+            setMovie(prev => movieRes.data)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
     return (
         <>
+            {reviewOpen && <ReviewPanel onSubmit={submitReview} onClose={() => setReviewOpen(false)} movie={{ ...movie, rating: calculateRating(movie.reviews) }} />}
             <Navbar />
             <div
-                style={{ backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, var(--main-color) 100%), url("${movie.img}")`, }}
+                style={{ backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), var(--main-color)), url("${movie.img}")`, }}
                 className="movie"
             >
             </div>
@@ -67,7 +95,7 @@ export default function Movie() {
                                 Comment
                             </div>
                         </div>
-                        <div className="movieRating">
+                        <div onClick={() => setReviewOpen(true)} className="movieRating">
                             <Stars />
                             <h3>{calculateRating(movie.reviews)}</h3>
                             <p>Rate Now</p>
