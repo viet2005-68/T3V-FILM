@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import { AuthContext } from "./authContext/AuthContext.jsx";
 import Movie from "./pages/movie/Movie.jsx";
+import Chatbot from "./Chatbot/Chatbot.jsx";
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -35,8 +36,7 @@ function App() {
         <Route
           path="/movie"
           element={user ? <Movie /> : <Navigate to="/register" />}
-        >
-        </Route>
+        ></Route>
         <Route
           path="/watch"
           element={user ? <Watch /> : <Navigate to="/register" />}
@@ -47,6 +47,7 @@ function App() {
           element={!user ? <Login /> : <Navigate to="/" />}
         />
       </Routes>
+      <Chatbot />
     </Router>
   );
 }
