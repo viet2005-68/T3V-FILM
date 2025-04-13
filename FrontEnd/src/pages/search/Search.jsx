@@ -5,6 +5,7 @@ import SearchCard from "../../components/SearchCard/SearchCard.jsx";
 import {MdManageSearch} from "react-icons/md";
 import {TablePagination, Box} from "@mui/material";
 import {useEffect, useState} from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "./search.scss"
 
@@ -42,7 +43,7 @@ function Tab({ selectedTab, onTabChange }) {
 
 
 
-export default function Search({type}) {
+export default function Search() {
     const [query, setQuery] = useState("");
     const [lists, setLists] = useState([]);
     const [genre, setGenre] = useState(null);
@@ -50,12 +51,15 @@ export default function Search({type}) {
     const [searchMovies, setSearchMovies] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const searchQuery = searchParams.get("query") || "";
 
     const moviesPerPage = 8;
     useEffect(() => {
         const getSearchMovies = async () => {
             try {
-                const response = await axios.get(`/api/movies?title=${query}`, {
+                const response = await axios.get(`/api/movies?title=${searchQuery}`, {
                     headers: {
                         token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
                     },
@@ -66,38 +70,14 @@ export default function Search({type}) {
             }
         };
 
-        if (query.trim() !== "") {
+        if (searchQuery.trim() !== "") {
             getSearchMovies();
         } else {
             setSearchMovies(allMovie); // fallback: hiển thị toàn bộ khi không có từ khóa
         }
-    }, [query, allMovie]);
+    }, [searchQuery]);
 
     useEffect(() => {
-        const getSearchMovies = async () => {
-            try {
-                const response = await axios.get(`/api/movies?title=${query}` , {
-                    headers: {
-                        token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
-                    },
-                });
-                setSearchMovies(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        const getRandomLists = async () => {
-            try {
-                const res = await axios.get(`/api/lists${type ? "?type=" + type : ""}${genre ? "&genre=" + genre : ""}`, {
-                    headers: {
-                        token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
-                    },
-                });
-                setLists(res.data);
-            } catch (err) {
-                console.log(err);
-            }
-        };
 
         const getAllMovie = async () => {
             try {
@@ -115,7 +95,7 @@ export default function Search({type}) {
 
         getRandomLists();
         getAllMovie();
-    }, [type, genre]);
+    }, []);
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -127,7 +107,7 @@ export default function Search({type}) {
     return (<div className="search">
         <Navbar/>
         <div className="search-content">
-            <Header query={query}/>
+            <Header query={searchQuery}/>
            <div className="tab-content">
                 <Filter/>
                {searchMovies.length === 0 && (

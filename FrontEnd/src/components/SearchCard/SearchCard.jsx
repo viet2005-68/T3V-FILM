@@ -65,6 +65,7 @@ function Popup({movie}) {
                     >
                         Thích
                     </Button>
+                    <Link to={{pathname: "/movie"}} state={{movie: movie}}>
                     <Button
                         className="info"
                         variant="outlined"
@@ -74,6 +75,7 @@ function Popup({movie}) {
                     >
                         Chi tiết
                     </Button>
+                    </Link>
                 </div>
 
                 <div className="popup-meta">
