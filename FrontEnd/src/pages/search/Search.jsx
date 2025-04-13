@@ -1,17 +1,18 @@
 import Navbar from "../../components/navbar/Navbar.jsx";
 import List from "../../components/List/List.jsx";
 import Filter from "../../components/Filter/Filter.jsx";
-import { MdManageSearch } from "react-icons/md";
-import {Grid, TablePagination} from "@mui/material";
+import MovieCard from "../../components/MovieCard/MovieCard.jsx";
+import {MdManageSearch} from "react-icons/md";
+import {TablePagination, Box} from "@mui/material";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import "./search.scss"
 
-function Header({query}){
+function Header({query}) {
     return (
         <div className="row-header">
             <div className="icon">
-                <MdManageSearch size={40} color="white" />
+                <MdManageSearch size={40} color="white"/>
             </div>
             <h3 className="category-name">
                 Kết quả tìm kiếm "{query || "Tất cả"}"
@@ -19,6 +20,7 @@ function Header({query}){
         </div>
     );
 }
+
 function Tab() {
     return (<div className="row-tabs-container">
         <a className="active">Phim</a>
@@ -32,7 +34,7 @@ export default function Search({type}) {
     const [lists, setLists] = useState([]);
     const [genre, setGenre] = useState(null);
     const [allMovie, setAllMovie] = useState([]);
-    const [page, setPage] = useState(2);
+    const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     const moviesPerPage = 8;
@@ -77,25 +79,33 @@ export default function Search({type}) {
         setPage(0);
     };
     return (<div className="search">
-
+        <Navbar/>
         <div className="search-content">
             <Header query={query}/>
             <Tab/>
             <div className="tab-content">
                 <Filter/>
-                <Grid container spacing={2}>
+                <Box
+                    sx={{
+                        display: "grid",
+                        gridTemplateColumns: {
+                            xs: "repeat(1, 1fr)",    // điện thoại: 1 cột
+                            sm: "repeat(2, 1fr)",    // tablet nhỏ: 2 cột
+                            md: "repeat(3, 1fr)",    // tablet lớn: 3 cột
+                            lg: "repeat(4, 1fr)",    // desktop: 4 cột
+                            xl: "repeat(5, 1fr)",    // màn lớn: 5 cột
+                        },
+                        gap: 2,
+                    }}
+                >
                     {allMovie
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map((movie) => (
-                            <Grid item xs={12} sm={6} md={3} key={movie._id}>
-                                <div className="movie-card">
-                                    <img src={movie.imgSm} alt={movie.title} />
-                                    <h4>{movie.title}</h4>
-                                </div>
-                            </Grid>
+                        .map((movie, index) => (
+                            <Box key={movie._id} sx={{ overflow: "visible" }}>
+                                <MovieCard key={movie.id} movieId={movie._id} index={index} />
+                            </Box>
                         ))}
-                </Grid>
-
+                </Box>
                 <List
                     list={{
                         title: "All Movies",
