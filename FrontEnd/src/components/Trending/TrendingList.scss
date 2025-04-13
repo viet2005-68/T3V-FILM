@@ -1,0 +1,109 @@
+.trending-list {
+  color: white;
+  padding: 5px;
+  max-height: none;
+  overflow: visible;
+  width: 100%;
+  margin-bottom: 20px;
+  margin-right: 40px;
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: white;
+    margin-left: 50px;
+  }
+
+  .scroll-wrapper {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    padding: 0 40px;
+    box-sizing: border-box;
+  }
+
+  .trending-scroll {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-behavior: smooth;
+    padding-bottom: 20px;
+    max-width: 100%;
+    background-color: transparent;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    padding-right: 100px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    // Đảm bảo phần tử hover không bị cắt
+    .trending-card-wrapper {
+      &:last-child {
+        position: visible;
+
+        .trending-card.hovered {
+          right: 0;
+          left: auto;
+          transform: translateX(1px);
+        }
+      }
+    }
+  }
+
+  .scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: none;
+    color: white;
+    padding: 0.2rem;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    &.disabled {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  .scroll-btn.left {
+    left: 0;
+  }
+
+  .scroll-btn.right {
+    right: 0;
+  }
+}
+
+// Thêm media query để xử lý trên các màn hình nhỏ
+@media (max-width: 768px) {
+  .trending-list {
+    .scroll-wrapper {
+      padding: 0 30px;
+    }
+
+    .trending-scroll {
+      padding-right: 80px;
+    }
+  }
+}

@@ -15,7 +15,16 @@ const MovieSchema = new mongoose.Schema({
     year: { type: String },
     limit: { type: Number },
     genre: { type: String },
-    isSeries: { type: Boolean, default: false }
+    duration: { type: String },
+    isSeries: { type: Boolean, default: false },
+    reviews: [
+        {
+            user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+            comment: { type: String },
+            rating: { type: Number, min: 1, max: 5, required: true },
+            createdAt: { type: Date, default: Date.now }
+        }
+    ]
 }, { timestamps: true });
 
 module.exports = mongoose.model("Movie", MovieSchema);
