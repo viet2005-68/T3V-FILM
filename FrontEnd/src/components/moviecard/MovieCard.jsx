@@ -1,5 +1,6 @@
 import "./moviecard.scss";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+import axios from "axios";
 import Button from "@mui/material/Button";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -33,7 +34,7 @@ function Popup({ movie }) {
       <div className="popup-poster-wrapper">
         <img
           className="popup-poster"
-          src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
+          src={movie.imgSm}
           alt={movie.title}
         />
       </div>
@@ -75,8 +76,10 @@ function Popup({ movie }) {
         </div>
 
         <div className="popup-meta">
-          <span>IMDb {movie.vote_average}</span>
-          <span>{movie.release_date?.slice(0, 4)}</span>
+          <span className="item">{movie.duration}</span>
+          <span className="limit">+{movie.limit}</span>
+          <span className="item">{movie.year}</span>
+          <div className="genre">{movie.genre}</div>
           <span>HD</span>
         </div>
       </div>
@@ -84,13 +87,32 @@ function Popup({ movie }) {
   );
 }
 
-export default function MovieCard({ movie }) {
+export default function MovieCard({movieId, index}) {
+  const [movie, setMovie] = useState({});
+
+  useEffect(() => {
+    const getMovie = async () => {
+      try {
+        const res = await axios.get(`/api/movies/${movieId}`, {
+          headers: {
+            token:
+                "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+          },
+        });
+        setMovie(res.data);
+      }
+      catch (error) {
+        console.log(error);
+      }
+    };
+    getMovie();
+  }, [movieId]);
   return (
     <div className="movie-card-wrapper">
       <div className="movie-card">
         <img
           className="movie-thumbnail"
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+          src={movie.imgSm}
           alt={movie.title}
         />
         <h3>{movie.title}</h3>

@@ -1,12 +1,13 @@
 .movie-card-wrapper {
     position: relative;
-    width: 200px;
+    width: 225px;
+    height: 300px;
     overflow: visible !important;
     border-radius: 5px;
     cursor: pointer;
     transition: transform 0.3s;
+    flex-shrink: 0;
     gap: .75rem;
-
     display: flex;
     flex-direction: column;
 
@@ -16,14 +17,14 @@
         gap: .75rem;
         .movie-thumbnail {
             width: 100%;
-            height: 100%;
+            height: 200px;
             object-fit: cover;
             border-radius: 5px;
             transition: transform 0.3s ease;
         }
-        h3{
+        h3 {
             font-size: 18px;
-            color: #fff;
+            margin-bottom: 8px;
         }
     }
 
@@ -35,7 +36,7 @@
         .movie-popup {
             visibility: visible;
             opacity: 1;
-            transform: translateX(-50%) scale(1);
+            transform: translateX(-30%) scale(1);
         }
     }
 
