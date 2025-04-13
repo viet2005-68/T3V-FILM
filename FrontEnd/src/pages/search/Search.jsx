@@ -47,13 +47,45 @@ export default function Search({type}) {
     const [lists, setLists] = useState([]);
     const [genre, setGenre] = useState(null);
     const [allMovie, setAllMovie] = useState([]);
+    const [searchMovies, setSearchMovies] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [selectedTab, setSelectedTab] = useState("movies");
 
     const moviesPerPage = 8;
+    useEffect(() => {
+        const getSearchMovies = async () => {
+            try {
+                const response = await axios.get(`/api/movies?title=${query}`, {
+                    headers: {
+                        token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+                    },
+                });
+                setSearchMovies(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        if (query.trim() !== "") {
+            getSearchMovies();
+        } else {
+            setSearchMovies(allMovie); // fallback: hiển thị toàn bộ khi không có từ khóa
+        }
+    }, [query, allMovie]);
 
     useEffect(() => {
+        const getSearchMovies = async () => {
+            try {
+                const response = await axios.get(`/api/movies?title=${query}` , {
+                    headers: {
+                        token: "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+                    },
+                });
+                setSearchMovies(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
         const getRandomLists = async () => {
             try {
                 const res = await axios.get(`/api/lists${type ? "?type=" + type : ""}${genre ? "&genre=" + genre : ""}`, {
@@ -98,7 +130,10 @@ export default function Search({type}) {
             <Header query={query}/>
            <div className="tab-content">
                 <Filter/>
-                <Box
+               {searchMovies.length === 0 && (
+                   <p style={{ color: "#fff", marginTop: "1rem" }}>Không tìm thấy phim {query} nào.</p>
+               )}
+               <Box
                     sx={{
                         display: "grid",
                         gridTemplateColumns: {
@@ -111,7 +146,7 @@ export default function Search({type}) {
                         rowGap: 0,
                     }}
                 >
-                    {allMovie
+                    {searchMovies
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((movie, index) => (
                             <Box key={movie._id} sx={{ overflow: "visible" }}>
@@ -119,15 +154,9 @@ export default function Search({type}) {
                             </Box>
                         ))}
                 </Box>
-                <List
-                    list={{
-                        title: "All Movies",
-                        content: allMovie.map((movie) => movie._id),
-                    }}
-                />
                 <TablePagination className="pagination"
                                  component="div"
-                                 count={100}
+                                 count={searchMovies.length}
                                  page={page}
                                  onPageChange={handleChangePage}
                                  rowsPerPage={rowsPerPage}
