@@ -18,7 +18,6 @@ import List from "./pages/list/List"
 import NewList from "./pages/newList/NewList"
 
 const Layout = () => {
-
   return (
     <>
       <Topbar />
