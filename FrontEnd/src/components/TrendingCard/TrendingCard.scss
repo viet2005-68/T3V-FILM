@@ -1,29 +1,44 @@
 .trending-card-wrapper {
   width: 225px;
-  height: 300px;
+  height: 325px;
   position: relative;
-  flex-shrink: 0;
   margin-right: 20px;
-  overflow: visible;
+  flex-shrink: 0;
+  flex: 0 0 auto;
+  z-index: 10;
+  transition: z-index 0s 0.1s;
+
+  &:hover {
+    z-index: 1000;
+    transition: z-index 0s;
+  }
 }
 
 .trending-card {
-  margin-right: 30px;
-  position: relative;
   width: 100%;
-  height: 100%;
+  height: 99%;
   border-radius: 8px;
-  overflow: hidden; /* Chỉ để hidden khi không hover */
+  overflow: hidden;
   background-color: #111;
-  transition: all 0.3s ease; /* Thay đổi từ transform sang all */
-  z-index: 1;
+  position: relative;
+  transition: all 0.2s ease-in;
 
-  img {
+  img,
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: -999;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.2s ease;
+    z-index: 1;
+  }
+
+  iframe {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
   }
 
   .card-rank {
@@ -32,147 +47,116 @@
     left: 10px;
     font-size: 1.5rem;
     font-weight: bold;
-    z-index: 2;
-    color: white;
+    color: #fff;
+    z-index: 3;
   }
 
-  iframe {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  .itemInfo {
+  .hover-trending {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.85);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.3s ease;
-    z-index: 2;
+    position: relative;
+    height: 100%;
+    pointer-events: none;
 
-    .icons {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
+    iframe {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
-      .icon {
-        color: white;
-        font-size: 22px;
+    .itemInfo {
+      position: absolute;
+      bottom: 0;
+      width: 325px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.85);
+      transform: scale(1.2);
+      opacity: 0;
+      transition: all 0.2s ease;
+      z-index: 3;
 
-        &:hover {
-          color: #e50914;
+      .icons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+
+        .icon {
+          color: #fff;
+          font-size: 22px;
+          cursor: pointer;
+
+          &:hover {
+            color: #e50914;
+          }
         }
       }
-    }
 
-    .itemInfoTop {
-      display: flex;
-      justify-content: flex-start;
-      margin-left: 5px;
-      align-items: center;
-      font-size: 0.8rem;
-      margin-bottom: 6px;
-      gap: 20px;
-
-      .limit {
-        background-color: #e50914;
-        padding: 2px 5px;
-        border-radius: 4px;
-        margin-right: 10px;
-      }
-      .item {
-        margin-right: 10px;
-        font-family: Tahoma;
+      .itemInfoTop {
+        display: flex;
+        align-items: center;
         font-size: 0.8rem;
-        color: #ccc;
-      }
-      .genre {
-        border: solid 1px #e50914;
-        border-radius: 5px;
-        font-size: 14px;
-        color: white;
-        min-width: 60px;
-        text-align: center;
-      }
-    }
+        margin-bottom: 6px;
+        gap: 15px;
 
-    .genre {
-      font-size: 0.8rem;
-      color: #ccc;
+        .item {
+          color: #ccc;
+        }
+
+        .limit {
+          background-color: #e50914;
+          padding: 2px 5px;
+          border-radius: 4px;
+          color: #fff;
+        }
+
+        .genre {
+          border: 1px solid #e50914;
+          border-radius: 5px;
+          font-size: 0.75rem;
+          padding: 2px 8px;
+          color: #fff;
+        }
+      }
+
+      .desc {
+        font-size: 0.85rem;
+        color: #ddd;
+        text-align: justify;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
 
   &.hovered {
-    position: absolute;
-    top: -80px;
-    left: -50px;
     width: 350px;
-    height: 380px;
-    transform: none;
-    z-index: 1000;
+    height: 350px;
+    transform: scale(1.05) translateY(-20px);
+    position: absolute;
+    top: 0;
+    z-index: 10000;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
-    transition: all 0.3s ease;
-
+    pointer-events: none;
     img {
       opacity: 0;
     }
 
     .itemInfo {
       opacity: 1;
-      transform: translateX(-10px);
-    }
-
-    .desc {
-      padding: 10px;
-      text-align: justify;
-      max-width: 300px;
-      display: -webkit-box;
-      margin-bottom: 5px;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-
-    &::after {
-      right: 0;
-      top: 0;
+      transform: translateY(0);
     }
   }
-  .hover-trending {
-    display: flex;
-    flex-direction: column;
-    iframe {
-      display: block;
-      opacity: 1;
-      pointer-events: auto;
-    }
 
-    .desc {
-      font-size: 0.85rem;
-      margin-bottom: 5px;
-      color: #ddd;
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 350px;
-      height: 100%;
-    }
+  &.align-right.hovered {
+    left: auto;
+    right: 0;
+    transform: scale(1.05) translateY(-20px) translateX(-30%);
+  }
+
+  &.hovered:not(.align-right) {
+    left: 0;
+    transform: scale(1.05) translateY(-20px) translateX(0);
   }
 }

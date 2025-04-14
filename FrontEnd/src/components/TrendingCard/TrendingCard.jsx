@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./TrendingCard.scss";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -12,9 +12,26 @@ import {
 const TrendingCard = ({ filmId, index }) => {
   const [isHover, setIsHover] = useState(false);
   const [film, setFilm] = useState({});
+  const cardRef = useRef(null);
+  const [alignRight, setAlignRight] = useState(false);
+
+  // Kiểm tra vị trí của card trong viewport
+  const checkPosition = () => {
+    if (cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+
+      // Nếu card ở nửa bên phải viewport, hiển thị hover content về bên trái
+      if (rect.right > viewportWidth - 200) {
+        setAlignRight(true);
+      } else {
+        setAlignRight(false);
+      }
+    }
+  };
 
   useEffect(() => {
-    const getMovie = async () => {
+    const fetchMovie = async () => {
       try {
         const res = await axios.get(`/api/movies/${filmId}`, {
           headers: {
@@ -24,22 +41,37 @@ const TrendingCard = ({ filmId, index }) => {
         });
         setFilm(res.data);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     };
-    getMovie();
+    fetchMovie();
+
+    // Đăng ký event listener cho resize
+    window.addEventListener("resize", checkPosition);
+    return () => window.removeEventListener("resize", checkPosition);
   }, [filmId]);
+
+  const handleMouseEnter = () => {
+    setIsHover(true);
+    checkPosition(); // Kiểm tra vị trí khi hover
+  };
 
   return (
     <div
       className="trending-card-wrapper"
-      onMouseEnter={() => setIsHover(true)}
+      ref={cardRef}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setIsHover(false)}
     >
-      <Link to={{ pathname: "/movie" }} state={{ movie: film }}>
-        <div className={`trending-card ${isHover ? "hovered" : ""}`}>
+      <Link to="/movie" state={{ movie: film }}>
+        <div
+          className={`trending-card ${isHover ? "hovered" : ""} ${
+            alignRight ? "align-right" : ""
+          }`}
+        >
           <img src={film.imgSm} alt={film.title} />
           <div className="card-rank">{index + 1}</div>
+
           {isHover && (
             <div className="hover-trending">
               <iframe
@@ -49,6 +81,7 @@ const TrendingCard = ({ filmId, index }) => {
                 allowFullScreen
                 title="trailer"
               ></iframe>
+
               <div className="itemInfo">
                 <div className="icons">
                   <PlayArrow className="icon" />
@@ -56,12 +89,14 @@ const TrendingCard = ({ filmId, index }) => {
                   <ThumbUpOutlined className="icon" />
                   <ThumbDownOutlined className="icon" />
                 </div>
+
                 <div className="itemInfoTop">
                   <span className="item">{film.duration}</span>
                   <span className="limit">+{film.limit}</span>
                   <span className="item">{film.year}</span>
                   <div className="genre">{film.genre}</div>
                 </div>
+
                 <div className="desc">{film.desc}</div>
               </div>
             </div>
