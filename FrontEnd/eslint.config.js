@@ -29,5 +29,10 @@ export default [
         { allowConstantExport: true },
       ],
     },
+    env: {
+      browser: true,
+      node: true, // 👈 Thêm dòng này
+      jest: true, // nếu bạn dùng jest/vitest
+    },
   },
 ]
