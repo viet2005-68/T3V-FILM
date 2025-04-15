@@ -19,7 +19,8 @@ export default function Home({ type }) {
     const getRandomLists = async () => {
       try {
         const res = await axios.get(
-          `/api/lists${type ? "?type=" + type : ""}${genre ? "&genre=" + genre : ""
+          `/api/lists${type ? "?type=" + type : ""}${
+            genre ? "&genre=" + genre : ""
           }`,
           {
             headers: {
@@ -56,13 +57,12 @@ export default function Home({ type }) {
             token:
               "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
           },
-        })
-        setTopMovie(res.data)
-      }
-      catch (err) {
+        });
+        setTopMovie(res.data);
+      } catch (err) {
         console.log(err);
       }
-    }
+    };
 
     getRandomLists();
     getAllMovie();
@@ -159,7 +159,7 @@ export default function Home({ type }) {
       ))}
       <TrendingList films={topMovie} title={"Most Popular"} />
       <TrendingList films={allMovie} />
-      <FilmSpecialList movies={specialFilms} />
+      <FilmSpecialList movies={allMovie} />
     </div>
   );
 }
