@@ -1,10 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./MovieSpecialCard.scss";
-const MovieSpecialCard = ({ film, index }) => {
+import axios from "axios";
+const MovieSpecialCard = ({ film_id, index }) => {
+  const [film, setFilm] = useState({});
+
+  useEffect(() => {
+    const fetchMovie = async () => {
+      try {
+        const res = await axios.get(`/api/movies/${film_id}`, {
+          headers: {
+            token:
+              "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+          },
+        });
+        setFilm(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchMovie();
+  }, [film_id]);
   return (
-    <div className="movie-card">
+    <div className={`movie-card ${index % 2 === 0 ? "cut-left" : "cut-right"}`}>
       <div className="poster-container">
-        <img src={film.img} alt={film.title} className="poster" />
+        <img src={film.imgSm} alt={film.title} className="poster" />
       </div>
 
       <div className="info">
@@ -12,7 +31,7 @@ const MovieSpecialCard = ({ film, index }) => {
         <div className="titles">
           <h4 className="title">{film.title}</h4>
           <p className="meta">
-            {film.year} • Duration {film.limit}
+            {film.year} • Category: <span>{film.genre}</span>
           </p>
         </div>
       </div>

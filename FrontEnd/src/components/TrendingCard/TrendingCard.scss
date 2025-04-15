@@ -152,7 +152,7 @@
   &.align-right.hovered {
     left: auto;
     right: 0;
-    transform: scale(1.05) translateY(-20px) translateX(-30%);
+    transform: scale(1.05) translateY(-20px) translateX(-10%);
   }
 
   &.hovered:not(.align-right) {
