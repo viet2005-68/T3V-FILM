@@ -1,5 +1,6 @@
 import "./movie.scss";
 import { useLocation } from "react-router-dom";
+import { useRef, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import {
   FavoriteBorder,
