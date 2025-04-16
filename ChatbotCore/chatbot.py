@@ -1,9 +1,5 @@
-import streamlit as st
-import pandas as pd
-import requests
-import json
 import os
-import re
+import requests
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader, CSVLoader, DirectoryLoader
 from langchain_openai import OpenAIEmbeddings
@@ -14,80 +10,33 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain.agents import initialize_agent, Tool, AgentType
 from langchain.prompts.prompt import PromptTemplate
+from langchain.schema import HumanMessage, AIMessage
+from langchain.chains import LLMChain
 
-# Tải biến môi trường từ file .env
+# --- Load environment variables ---
 load_dotenv()
-
-# Lấy API keys từ biến môi trường
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")
-# Kiểm tra API keys
 if not OPENAI_API_KEY:
-    st.error("Không tìm thấy OPENAI_API_KEY trong file .env. Vui lòng thêm vào file .env.")
-    st.stop()
-
-if not TMDB_API_KEY:
-    st.warning("Không tìm thấy TMDB_API_KEY trong file .env. Chức năng tìm kiếm phim sẽ không hoạt động.")
-
-# Cấu hình OpenAI API Key cho LangChain
+    raise Exception("OPENAI_API_KEY not found in .env")
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
-# Cấu hình trang Streamlit
-st.set_page_config(page_title="Multi-Source ChatBot", layout="wide")
-st.title("ChatBot với PDF, CSV và TMDB API")
-
-# Thông báo về API keys
-with st.sidebar:
-    st.header("Thông tin API")
-    if OPENAI_API_KEY:
-        st.success("✅ Đã tải OpenAI API Key từ .env")
-    else:
-        st.error("❌ Chưa cấu hình OpenAI API Key")
-    
-    if TMDB_API_KEY:
-        st.success("✅ Đã tải TMDB API Key từ .env")
-    else:
-        st.error("❌ Chưa cấu hình TMDB API Key")
-
-# Khởi tạo session state variables
-if "conversation" not in st.session_state:
-    st.session_state.conversation = None
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-if "vectorstore" not in st.session_state:
-    st.session_state.vectorstore = None
-if "combined_vectorstore" not in st.session_state:
-    st.session_state.combined_vectorstore = None
-
-# Hàm xử lý tải file PDF từ đường dẫn
+# --- Document processing (PDF/CSV) ---
 def process_pdf_from_path(pdf_path):
     try:
-        # Kiểm tra nếu đường dẫn là thư mục thì xử lý tất cả các file pdf trong thư mục
-        if os.path.isdir(pdf_path):
-            loader = DirectoryLoader(pdf_path, glob="**/*.pdf", loader_cls=PyPDFLoader)
-            documents = loader.load()
-        else:
-            # Nếu là file cụ thể
-            loader = PyPDFLoader(pdf_path)
-            documents = loader.load()
-        
-        # Chia nhỏ tài liệu
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-        docs = text_splitter.split_documents(documents)
-        
-        # Tạo embeddings và lưu vào vectorstore
-        embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY, base_url= OPENAI_BASE_URL)
+        loader = PyPDFLoader(pdf_path)
+        documents = loader.load()
+        splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+        docs = splitter.split_documents(documents)
+        embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
         vectorstore = FAISS.from_documents(docs, embeddings)
-        
-        return vectorstore, f"Đã xử lý PDF từ: {pdf_path}"
+        return vectorstore, f"✅ Processed PDF from: {pdf_path}"
     except Exception as e:
-        return None, f"Lỗi khi xử lý PDF: {str(e)}"
+        return None, f"❌ Error processing PDF: {e}"
 
-# Hàm xử lý tải file CSV từ đường dẫn
 def process_csv_from_path(csv_path):
     try:
-        # Kiểm tra nếu đường dẫn là thư mục thì xử lý tất cả các file csv trong thư mục
         if os.path.isdir(csv_path):
             all_docs = []
             for file in os.listdir(csv_path):
@@ -97,328 +46,262 @@ def process_csv_from_path(csv_path):
                     all_docs.extend(loader.load())
             documents = all_docs
         else:
-            # Nếu là file cụ thể
             loader = CSVLoader(file_path=csv_path)
             documents = loader.load()
-        
-        # Chia nhỏ tài liệu nếu cần
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-        docs = text_splitter.split_documents(documents)
-        
-        # Tạo embeddings và lưu vào vectorstore
-        embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY, base_url= os.getenv(OPENAI_BASE_URL))
+        splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+        docs = splitter.split_documents(documents)
+        embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
         vectorstore = FAISS.from_documents(docs, embeddings)
-        
-        return vectorstore, f"Đã xử lý CSV từ: {csv_path}"
+        return vectorstore, f"✅ Processed CSV from: {csv_path}"
     except Exception as e:
-        return None, f"Lỗi khi xử lý CSV: {str(e)}"
+        return None, f"❌ Error processing CSV: {e}"
 
-# Hàm gọi TMDB API
+# --- Save and load vectorstore ---
+def save_vectorstore(vectorstore, path):
+    try:
+        vectorstore.save_local(path)
+        return f"✅ Vectorstore saved at: {path}"
+    except Exception as e:
+        return f"❌ Error saving vectorstore: {e}"
+
+def load_vectorstore(path):
+    try:
+        embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
+        vectorstore = FAISS.load_local(path, embeddings)
+        return vectorstore
+    except Exception:
+        return None
+
+# --- TMDB API and Tools ---
 def call_tmdb_api(endpoint, params=None):
     base_url = "https://api.themoviedb.org/3"
     headers = {
         "Authorization": f"Bearer {TMDB_API_KEY}",
         "Content-Type": "application/json;charset=utf-8"
     }
-    
     url = f"{base_url}/{endpoint}"
-    
     try:
-        response = requests.get(url, headers=headers, params=params)
-        response.raise_for_status()
-        return response.json()
+        res = requests.get(url, headers=headers, params=params)
+        res.raise_for_status()
+        return res.json()
     except Exception as e:
         return {"error": str(e)}
 
-# Tools TMDB API
-def get_popular_movies(query=None):
-    """Lấy danh sách phim phổ biến nhất hiện tại"""
+def get_popular_movies(_=None):
     if not TMDB_API_KEY:
-        return "Không thể sử dụng chức năng này. TMDB API Key chưa được cấu hình."
-    
-    response = call_tmdb_api("movie/popular", {"language": "vi-VN"})
-    if "error" in response:
-        return f"Lỗi khi lấy phim phổ biến: {response['error']}"
-    
-    results = response.get("results", [])
+        return "TMDB API Key not configured."
+    res = call_tmdb_api("movie/popular")
+    if "error" in res:
+        return f"Error fetching popular movies: {res['error']}"
+    results = res.get("results", [])
     if not results:
-        return "Không tìm thấy phim phổ biến nào."
-    
-    formatted_results = "Các phim phổ biến nhất hiện tại:\n\n"
-    for i, movie in enumerate(results[:10], 1):
-        title = movie.get("title", "Không có tiêu đề")
-        overview = movie.get("overview", "Không có mô tả")
-        release_date = movie.get("release_date", "Không có ngày phát hành")
-        vote_average = movie.get("vote_average", 0)
-        
-        formatted_results += f"{i}. {title}\n"
-        formatted_results += f"   Ngày phát hành: {release_date}\n"
-        formatted_results += f"   Đánh giá: {vote_average}/10\n"
-        formatted_results += f"   Tóm tắt: {overview[:200]}...\n\n"
-    
-    return formatted_results
+        return "No popular movies found."
+    formatted = "Popular movies:\n\n" + "\n".join([f"{i+1}. {m['title']}" for i, m in enumerate(results[:5])])
+    return formatted
 
 def search_movies(query):
-    """Tìm kiếm phim theo từ khóa"""
     if not TMDB_API_KEY:
-        return "Không thể sử dụng chức năng này. TMDB API Key chưa được cấu hình."
-    
+        return "TMDB API Key not configured."
     if not query:
-        return "Vui lòng cung cấp từ khóa tìm kiếm."
-    
-    response = call_tmdb_api("search/movie", {"query": query, "language": "vi-VN"})
-    if "error" in response:
-        return f"Lỗi khi tìm kiếm phim: {response['error']}"
-    
-    results = response.get("results", [])
+        return "Please provide a search keyword."
+    res = call_tmdb_api("search/movie", {"query": query})
+    if "error" in res:
+        return f"Error searching movies: {res['error']}"
+    results = res.get("results", [])
     if not results:
-        return f"Không tìm thấy phim nào với từ khóa '{query}'."
-    
-    formatted_results = f"Kết quả tìm kiếm cho '{query}':\n\n"
-    for i, movie in enumerate(results[:5], 1):
-        title = movie.get("title", "Không có tiêu đề")
-        overview = movie.get("overview", "Không có mô tả")
-        release_date = movie.get("release_date", "Không có ngày phát hành")
-        vote_average = movie.get("vote_average", 0)
-        
-        formatted_results += f"{i}. {title}\n"
-        formatted_results += f"   Ngày phát hành: {release_date}\n"
-        formatted_results += f"   Đánh giá: {vote_average}/10\n"
-        formatted_results += f"   Tóm tắt: {overview[:200]}...\n\n"
-    
-    return formatted_results
+        return f"No movies found with keyword '{query}'."
+    formatted = f"Search results for '{query}':\n\n" + "\n".join([f"{i+1}. {m['title']}" for i, m in enumerate(results[:5])])
+    return formatted
 
 def get_movie_recommendations(query):
-    """Lấy đề xuất phim tương tự dựa trên tên phim"""
     if not TMDB_API_KEY:
-        return "Không thể sử dụng chức năng này. TMDB API Key chưa được cấu hình."
-    
+        return "TMDB API Key not configured."
     if not query:
-        return "Vui lòng cung cấp tên phim để tìm đề xuất."
-    
-    # Đầu tiên tìm phim theo tên
-    search_response = call_tmdb_api("search/movie", {"query": query, "language": "vi-VN"})
-    if "error" in search_response:
-        return f"Lỗi khi tìm kiếm phim: {search_response['error']}"
-    
-    results = search_response.get("results", [])
+        return "Please provide a movie name to get recommendations."
+    res = call_tmdb_api("search/movie", {"query": query})
+    if "error" in res:
+        return f"Error searching movie: {res['error']}"
+    results = res.get("results", [])
     if not results:
-        return f"Không tìm thấy phim nào với tên '{query}'."
-    
-    # Lấy ID của phim đầu tiên
+        return f"No movie found with name '{query}'."
     movie_id = results[0]["id"]
     movie_title = results[0]["title"]
-    
-    # Lấy các phim tương tự
-    recommendations = call_tmdb_api(f"movie/{movie_id}/recommendations", {"language": "vi-VN"})
-    if "error" in recommendations:
-        return f"Lỗi khi lấy đề xuất phim: {recommendations['error']}"
-    
-    similar_movies = recommendations.get("results", [])
-    if not similar_movies:
-        return f"Không tìm thấy đề xuất nào cho phim '{movie_title}'."
-    
-    formatted_results = f"Các phim tương tự '{movie_title}':\n\n"
-    for i, movie in enumerate(similar_movies[:5], 1):
-        title = movie.get("title", "Không có tiêu đề")
-        overview = movie.get("overview", "Không có mô tả")
-        release_date = movie.get("release_date", "Không có ngày phát hành")
-        vote_average = movie.get("vote_average", 0)
-        
-        formatted_results += f"{i}. {title}\n"
-        formatted_results += f"   Ngày phát hành: {release_date}\n"
-        formatted_results += f"   Đánh giá: {vote_average}/10\n"
-        formatted_results += f"   Tóm tắt: {overview[:200]}...\n\n"
-    
-    return formatted_results
+    recs = call_tmdb_api(f"movie/{movie_id}/recommendations")
+    if "error" in recs:
+        return f"Error getting recommendations: {recs['error']}"
+    similar = recs.get("results", [])
+    if not similar:
+        return f"No recommendations found for '{movie_title}'."
+    formatted = f"Similar movies for '{movie_title}':\n\n" + "\n".join([f"{i+1}. {m['title']}" for i, m in enumerate(similar[:5])])
+    return formatted
 
-# Khởi tạo agent và tools
 def create_agent():
-    llm = ChatOpenAI(temperature=0.2, model_name="gpt-4o-mini", base_url= OPENAI_BASE_URL, api_key= OPENAI_API_KEY)
-    
+    llm = ChatOpenAI(temperature=0.2, model_name="gpt-4o-mini", api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
     tools = [
-        Tool(
-            name="PopularMovies",
-            func=get_popular_movies,
-            description="Lấy danh sách các phim phổ biến nhất hiện tại"
-        ),
-        Tool(
-            name="SearchMovies",
-            func=search_movies,
-            description="Tìm kiếm phim theo từ khóa. Nhập tên phim bạn muốn tìm."
-        ),
-        Tool(
-            name="MovieRecommendations",
-            func=get_movie_recommendations,
-            description="Lấy đề xuất các phim tương tự dựa trên tên phim. Nhập tên phim bạn muốn lấy đề xuất."
-        )
+        Tool(name="PopularMovies", func=get_popular_movies, description="Use when the user wants to see trending or popular movies, hotest film."),
+        Tool(name="SearchMovies", func=search_movies, description="Search for movies by name."),
+        Tool(name="MovieRecommendations", func=get_movie_recommendations, description="Suggest similar movies.")
     ]
-    
-    agent = initialize_agent(
-        tools,
-        llm,
+    return initialize_agent(
+        tools, llm,
         agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-        verbose=True,
-        handle_parsing_errors=True
+        handle_parsing_errors=True,
+        verbose=False
     )
-    
-    return agent
 
-# Tạo các panel ở sidebar
-with st.sidebar:
-    st.header("Cấu hình")
-    
-    # Xử lý PDF từ đường dẫn
-    st.subheader("Xử lý PDF từ đường dẫn")
-    pdf_path = st.text_input("Nhập đường dẫn đến file PDF hoặc thư mục chứa PDF")
-    if pdf_path and st.button("Xử lý PDF"):
-        with st.spinner("Đang xử lý file PDF..."):
-            vectorstore, message = process_pdf_from_path(pdf_path)
-            if vectorstore:
-                st.session_state.vectorstore = vectorstore
-                # Gộp với vectorstore hiện có nếu có
-                if st.session_state.combined_vectorstore:
-                    st.session_state.combined_vectorstore.merge_from(vectorstore)
-                else:
-                    st.session_state.combined_vectorstore = vectorstore
-                st.success(message)
-            else:
-                st.error(message)
-    
-    # Xử lý CSV từ đường dẫn
-    st.subheader("Xử lý CSV từ đường dẫn")
-    csv_path = st.text_input("Nhập đường dẫn đến file CSV hoặc thư mục chứa CSV")
-    if csv_path and st.button("Xử lý CSV"):
-        with st.spinner("Đang xử lý file CSV..."):
-            vectorstore, message = process_csv_from_path(csv_path)
-            if vectorstore:
-                # Gộp với vectorstore hiện có nếu có
-                if st.session_state.combined_vectorstore:
-                    st.session_state.combined_vectorstore.merge_from(vectorstore)
-                else:
-                    st.session_state.combined_vectorstore = vectorstore
-                st.success(message)
-            else:
-                st.error(message)
-    
-    # Thông tin về tình trạng dữ liệu
-    st.subheader("Trạng thái dữ liệu")
-    if st.session_state.combined_vectorstore:
-        st.success("✅ Đã tải dữ liệu từ các nguồn")
-    else:
-        st.warning("⚠️ Chưa tải dữ liệu từ bất kỳ nguồn nào")
-    
-    # Xóa dữ liệu
-    if st.button("Xóa tất cả dữ liệu đã tải"):
-        st.session_state.vectorstore = None
-        st.session_state.combined_vectorstore = None
-        st.success("Đã xóa tất cả dữ liệu")
+# --- Conversation history processing ---
+def convert_history_to_langchain(history):
+    messages = []
+    for msg in history:
+        role = msg.get("role")
+        content = msg.get("content", "")
+        if role == "user":
+            messages.append(HumanMessage(content=content))
+        elif role in ["bot", "assistant"]:
+            messages.append(AIMessage(content=content))
+    return messages
 
-# Main chat interface
-st.header("Chat")
+# --- GPT fallback ---
+def gpt_fallback(question):
+    llm = ChatOpenAI(temperature=0.7, model_name="gpt-4o-mini", api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
+    return llm.invoke(question)
 
-# Hàm phân tích câu hỏi để xác định nguồn dữ liệu
-def analyze_query(query):
-    # Các từ khóa liên quan đến phim
-    movie_keywords = ["phim", "diễn viên", "đạo diễn", "chiếu rạp", "thể loại phim", 
-                       "phổ biến", "đánh giá", "review", "trailer", "tìm phim", 
-                       "gợi ý", "đề xuất", "tương tự", "tmdb", "imdb", "netflix",
-                       "blockbuster", "oscar", "điện ảnh", "upcoming"]
-    
-    # Kiểm tra nếu có từ khóa nào trong câu hỏi
-    for keyword in movie_keywords:
-        if keyword.lower() in query.lower():
-            return "movie"
-    
-    # Mặc định là tìm kiếm trong cơ sở kiến thức
-    return "knowledge_base"
+# --- Intent classification ---
+def classify_intent_with_chain(question):
+    greetings = ["chào", "xin chào", "hello", "hi"]
+    if any(greet in question.lower() for greet in greetings):
+        return "service"
+    prompt = PromptTemplate.from_template("""
+You are an expert classifier. Classify the user's question into only one of the following types:
 
-# Hiển thị lịch sử chat
-for message in st.session_state.chat_history:
-    if message["role"] == "user":
-        with st.chat_message("user"):
-            st.write(message["content"])
-    else:
-        with st.chat_message("assistant"):
-            st.write(message["content"])
+- "movie" — for any question about movies, searching for a film, actor, recommendations, or anything about the film industry.
+- "service" — for questions related to T3V, support, FAQs, account help, website usage, subscription, or any internal service-related topic.
+- "other" — for anything else not related to movies or T3V service.
 
-# Input chat
-user_query = st.chat_input("Nhập câu hỏi của bạn...")
+Some examples:
 
-if user_query:
-    # Hiển thị tin nhắn người dùng
-    with st.chat_message("user"):
-        st.write(user_query)
+Q: What is T3V? → service  
+Q: How do I reset my password on T3V? → service  
+Q: Suggest me a romantic movie. → movie  
+Q: Who acted in Inception? → movie  
+Q: Tell me about the latest Marvel movie. → movie  
+Q: What is the capital of France? → other
+
+Now classify the following:
+
+Question: {question}  
+Type:
+""")
+
+    llm = ChatOpenAI(temperature=0, model_name="gpt-4o-mini", api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
+    chain = LLMChain(llm=llm, prompt=prompt)
+    return chain.run({"question": question}).strip().lower()
+
+# --- Answer from vectorstore (with history) ---
+def answer_from_vectorstore(question, chat_history, vectorstore):
+    llm = ChatOpenAI(temperature=0, model_name="gpt-4o-mini", api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
+    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    for msg in convert_history_to_langchain(chat_history):
+        memory.chat_memory.add_message(msg)
+    prompt = PromptTemplate(template="""
+You are a chatbot named T3VMovieBot, friendly and helpful.
+Use the information below (embedded from service documentation) to answer user questions.
+If no relevant info is found, use the context (chat history) to answer 
+or you can use your knowledge to answer the question, just related to film or policies.
+Format your answer beautiful
+
+Context: {context}
+History: {chat_history}
+Question: {question}
+Answer:
+""", input_variables=["context", "chat_history", "question"])
+    chain = ConversationalRetrievalChain.from_llm(
+        llm=llm,
+        retriever=vectorstore.as_retriever(),
+        memory=memory,
+        combine_docs_chain_kwargs={"prompt": prompt}
+    )
+    try:
+        result = chain.invoke({"question": question})
+        return result.get("answer", "No answer available.")
+    except Exception as e:
+        return f"[🧠] Chain error: {e}\nFallback GPT:\n{gpt_fallback(question)}"
+
+
+def enrich_movie_info(question, tmdb_response):
+    prompt_text = f"""
+You are a film critic and expert, known for providing refined, insightful commentary about movies.
+Based on the TMDB data provided below, please generate a polished response that highlights the top movies relevant to the query,
+and includes additional insights such as trends, noteworthy performances, and critical analysis.
+If possible, format your answer in a well-structured list or paragraph.
     
-    # Thêm vào lịch sử
-    st.session_state.chat_history.append({"role": "user", "content": user_query})
+TMDB data:
+{tmdb_response}
+
+User query: {question}
+
+Your refined response (e.g., top recommended movies and brief commentary):
+"""
+    llm = ChatOpenAI(temperature=0.5, model_name="gpt-4o-mini",
+                     api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
+    enriched = llm.invoke(prompt_text)
+    return enriched
+
+
+def answer_from_your_acknowledge(question, chat_history):
+    llm = ChatOpenAI(
+        temperature=0.2,
+        model_name="gpt-4o-mini",
+        api_key=OPENAI_API_KEY,
+        base_url=OPENAI_BASE_URL
+    )
+    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    for msg in convert_history_to_langchain(chat_history):
+        memory.chat_memory.add_message(msg)
+    prompt = PromptTemplate(
+        template="""
+You are a chatbot named T3VMovieBot, friendly and helpful.
+Using your knowledge and the chat history below,
+please provide the most accurate and helpful answer.
+
+History: {chat_history}
+Question: {question}
+Answer:
+""",
+        input_variables=["chat_history", "question"]
+    )
+    chain = LLMChain(llm=llm, prompt=prompt)
+    try:
+        chat_history_str = "\n".join([msg.content for msg in memory.chat_memory.messages])
+        result = chain.invoke({
+            "chat_history": chat_history_str,
+            "question": question
+        })
+        return result.get("text", "").strip()
+    except Exception as e:
+        return f"[🧠] Chain error: {e}\nFallback GPT:\n{gpt_fallback(question)}"
+
+
+def process_question(question, chat_history, vectorstore):
+    intent = classify_intent_with_chain(question)
     
-    # Xử lý câu hỏi
-    with st.chat_message("assistant"):
-        # Phân tích câu hỏi để quyết định xử lý bằng nguồn nào
-        query_type = analyze_query(user_query)
-        
-        if query_type == "movie" and TMDB_API_KEY:
-            # Sử dụng TMDB API cho câu hỏi liên quan đến phim
-            with st.spinner("Đang tìm kiếm thông tin về phim..."):
-                try:
-                    agent = create_agent()
-                    response = agent.invoke(user_query)
-                    st.write(response)
-                    st.session_state.chat_history.append({"role": "assistant", "content": response})
-                except Exception as e:
-                    error_msg = f"Lỗi khi xử lý yêu cầu về phim: {str(e)}"
-                    st.error(error_msg)
-                    st.session_state.chat_history.append({"role": "assistant", "content": error_msg})
-        
-        elif st.session_state.combined_vectorstore is not None:
-            # Sử dụng vectorstore để trả lời từ dữ liệu đã nạp
-            with st.spinner("Đang xử lý câu hỏi..."):
-                # Khởi tạo LLM
-                llm = ChatOpenAI(temperature=0.2, model_name="gpt-4o-mini", api_key=OPENAI_API_KEY, base_url= OPENAI_BASE_URL)
-                
-                # Tạo memory
-                memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-                
-                # Custom prompt template để hướng dẫn AI trả lời dựa trên context
-                qa_template = """
-                Sử dụng thông tin sau đây để trả lời câu hỏi của người dùng.
-                Nếu bạn không biết câu trả lời, hãy nói rằng bạn không biết. ĐỪNG bịa ra thông tin.
-                
-                Context: {context}
-                
-                Lịch sử trò chuyện: {chat_history}
-                
-                Câu hỏi: {question}
-                
-                Câu trả lời:
-                """
-                QA_PROMPT = PromptTemplate(
-                    template=qa_template, 
-                    input_variables=["context", "chat_history", "question"]
-                )
-                
-                # Tạo conversation chain
-                conversation_chain = ConversationalRetrievalChain.from_llm(
-                    llm=llm,
-                    retriever=st.session_state.combined_vectorstore.as_retriever(),
-                    memory=memory,
-                    combine_docs_chain_kwargs={"prompt": QA_PROMPT}
-                )
-                
-                # Lấy câu trả lời
-                response = conversation_chain.invoke({"question": user_query})
-                answer = response["answer"]
-                
-                st.write(answer)
-                st.session_state.chat_history.append({"role": "assistant", "content": answer})
-        
+    if intent == "movie" and TMDB_API_KEY:
+        try:
+            agent = create_agent()
+            tmdb_response = agent.run(question)
+            # call enrich info
+            enriched = enrich_movie_info(question, tmdb_response)
+            return f"[🔍] TMDB data:\n\n{tmdb_response}\n\n[✨] Refined Movie Insights:\n{enriched}"
+        except Exception as e:
+            return f"[⚠️] TMDB error: {e}\n\n[🧠] GPT fallback:\n{gpt_fallback(question)}"
+    
+    if intent == "service":
+        if vectorstore:
+            return answer_from_vectorstore(question, chat_history, vectorstore)
         else:
-            message = ""
-            if query_type == "movie" and not TMDB_API_KEY:
-                message = "TMDB API Key chưa được cấu hình nên không thể trả lời câu hỏi về phim. "
-            
-            message += "Vui lòng tải dữ liệu từ PDF hoặc CSV trước khi đặt câu hỏi về kiến thức cụ thể."
-            
-            st.warning(message)
-            st.session_state.chat_history.append({"role": "assistant", "content": message})
+            return "No service documentation data found. Please upload a document (PDF/CSV) first."
+    
+    if intent == "other":
+        return answer_from_your_acknowledge(question, chat_history)
+    
+    return f"[🧠] GPT fallback answer (no local data):\n{gpt_fallback(question)}"
