@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
-from chatbot_core import (
+from chatbot import (
     process_pdf_from_path,
     process_csv_from_path,
     save_vectorstore,
