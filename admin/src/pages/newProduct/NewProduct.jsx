@@ -36,9 +36,9 @@ export default function NewProduct() {
             const title = apiTitle.trim().replaceAll(" ", "-")
             const res = await axios.get(`${FilmUrl.GET_FILM_BASE_URL}${title}`)
             const metadata = res.data.movie
-            console.log(res.data.episodes[0].server_data.map(video => {
+            const episodes = res.data.episodes[0].server_data.map(video => {
                 return video.link_embed
-            }))
+            })
             setMovie(prev => ({ ...prev, img: metadata.poster_url }))
             setMovie(prev => ({ ...prev, imgSm: metadata.thumb_url }))
             setMovie(prev => ({ ...prev, title: metadata.name }))
@@ -46,6 +46,7 @@ export default function NewProduct() {
             setMovie(prev => ({ ...prev, year: metadata.year }))
             setMovie(prev => ({ ...prev, duration: metadata.time }))
             setMovie(prev => ({ ...prev, video: res.data.episodes[0].server_data[0].link_embed }))
+            setMovie(prev => ({ ...prev, episodes }))
         }
         catch (err) {
             console.log(err)

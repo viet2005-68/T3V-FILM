@@ -23,6 +23,7 @@ export default function Movie() {
   const location = useLocation()
   const [movie, setMovie] = useState(location.state.movie)
   const commentStart = useRef()
+  console.log(movie)
 
   const calculateRating = (reviews) => {
     let avg = 0;
@@ -139,9 +140,16 @@ export default function Movie() {
               <h3>Episodes</h3>
             </div>
             <ul>
-              <Link className="link" to={{ pathname: "/watch" }} state={{ movie: movie }}>
+              {/* <Link className="link" to={{ pathname: "/watch" }} state={{ movie: movie }}>
                 <li>Ep 1</li>
-              </Link>
+              </Link> */}
+              {movie.episodes && movie.episodes.map(((episode, ind) => {
+                return (
+                  <Link className="link" to={{ pathname: "/watch" }} state={{ movie: movie, video: episode }}>
+                    <li>{`Ep ${ind + 1}`}</li>
+                  </Link>
+                )
+              }))}
             </ul>
           </div>
 
