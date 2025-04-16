@@ -24,12 +24,6 @@ export default function Product() {
 
     return (
         <div className="product">
-            <div className="productTitleContainer">
-                <h1 className="productTitle">Movie</h1>
-                <Link to="/newProduct">
-                    <button className="productAddButton">Create</button>
-                </Link>
-            </div>
             <div className="productTop">
                 <div className="productTopRight">
                     <div className="productInfoTop">
