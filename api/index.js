@@ -8,20 +8,23 @@ const movieRoute = require("./routes/movies");
 const listRoute = require("./routes/lists");
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log("Connect to database successfully");
-    })
-    .catch(() => {
-        console.log("Failed to connect to database");
-    })
-
+if (require.main === module) {
+    mongoose.connect(process.env.MONGO_URL)
+        .then(() => {
+            console.log("Connect to database successfully");
+        })
+        .catch(() => {
+            console.log("Failed to connect to database");
+        })
+}
 app.use(express.json());
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/movies", movieRoute);
 app.use("/api/lists", listRoute);
-
-app.listen(8800, () => {
-    console.log("Listening on port 8800");
-})
+if (require.main === module) {
+    app.listen(8800, () => {
+        console.log("Listening on port 8800");
+    })
+}
+module.exports = app;

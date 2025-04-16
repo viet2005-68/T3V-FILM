@@ -9,7 +9,8 @@ export default function Login() {
   const { dispatch } = useContext(AuthContext);
   const handleLogin = (e) => {
     e.preventDefault();
-    login({ email, password }, dispatch);
+    //login({ email, password }, dispatch);
+     dispatch({ type: 'LOGIN', payload: { email, password } });
   };
 
   return (
@@ -20,7 +21,7 @@ export default function Login() {
         </div>
       </div>
       <div className="container">
-        <form>
+        <form role="form">
           <h1>Sign In</h1>
           <input
             type="email"

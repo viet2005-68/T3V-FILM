@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./chatbot.scss";
 import { Bot, X, Loader2 } from "lucide-react";
 import axios from "axios";
@@ -14,7 +14,19 @@ function Chatbot() {
   ]);
   const [loading, setLoading] = useState(false);
 
+  const messagesEndRef = useRef(null); // ✅ ref cuối cùng để scroll tới
+
   const toggleChat = () => setIsOpen(!isOpen);
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom(); // ✅ tự cuộn khi có tin nhắn hoặc loading thay đổi
+  }, [messages, loading]);
 
   const sendMessage = async () => {
     if (!question.trim()) return;
@@ -62,6 +74,7 @@ function Chatbot() {
                 <Loader2 className="loading-spinner" size={16} /> Đang xử lý...
               </div>
             )}
+            <div ref={messagesEndRef} /> {/* ✅ ref để auto scroll */}
           </div>
           <div className="chatbot-input">
             <input

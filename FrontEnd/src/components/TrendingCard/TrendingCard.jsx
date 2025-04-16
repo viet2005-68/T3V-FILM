@@ -53,7 +53,7 @@ const TrendingCard = ({ filmId, index }) => {
 
   const handleMouseEnter = () => {
     setIsHover(true);
-    checkPosition(); // Kiểm tra vị trí khi hover
+    checkPosition();
   };
 
   return (

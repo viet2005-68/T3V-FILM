@@ -13,5 +13,17 @@ export default defineConfig({
         secure: false,
       },
     },
+    watch: {
+      usePolling: true,
+      interval: 100,
+    },
+  },
+  test: {
+    watch: false,
+    threads: false,
+    workers: 1,
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.js'],
   }
 })
