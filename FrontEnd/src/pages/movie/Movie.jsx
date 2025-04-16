@@ -14,7 +14,7 @@ import {
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import ReviewPanel from "../../components/ReviewPanel/ReviewPanel";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 export default function Movie() {
