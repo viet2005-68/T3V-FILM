@@ -4,13 +4,14 @@ import Navbar from "../../components/navbar/Navbar"
 import { FavoriteBorder, Favorite, PlayArrow, Add, Share, Stars, Comment, Notes, PlayArrowOutlined } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import ReviewPanel from "../../components/ReviewPanel/ReviewPanel";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
 export default function Movie() {
     const [reviewOpen, setReviewOpen] = useState(false)
     const location = useLocation()
     const [movie, setMovie] = useState(location.state.movie)
+    const commentStart = useRef()
 
     const calculateRating = (reviews) => {
         let avg = 0
@@ -19,6 +20,10 @@ export default function Movie() {
         }
         return avg / (reviews.length !== 0 ? reviews.length : 1)
     }
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
 
     const submitReview = async (review) => {
         try {
@@ -90,7 +95,9 @@ export default function Movie() {
                                 <Share />
                                 Share
                             </div>
-                            <div className="movieButton">
+                            <div className="movieButton" onClick={() => {
+                                commentStart.current.scrollIntoView({ behavior: 'smooth' });
+                            }}>
                                 <Comment />
                                 Comment
                             </div>
@@ -116,7 +123,7 @@ export default function Movie() {
                     <div className="containerMid">
                         <div className="containerDesc">
                             <Comment />
-                            <h3>Comments ({movie.reviews.length})</h3>
+                            <h3 ref={commentStart}>Comments ({movie.reviews.length})</h3>
                         </div>
                         {movie.reviews.map(review => (
                             <div className="review">
