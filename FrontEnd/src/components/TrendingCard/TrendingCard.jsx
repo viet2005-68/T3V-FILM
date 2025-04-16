@@ -65,9 +65,8 @@ const TrendingCard = ({ filmId, index }) => {
     >
       <Link to="/movie" state={{ movie: film }}>
         <div
-          className={`trending-card ${isHover ? "hovered" : ""} ${
-            alignRight ? "align-right" : ""
-          }`}
+          className={`trending-card ${isHover ? "hovered" : ""} ${alignRight ? "align-right" : ""
+            }`}
         >
           <img src={film.imgSm} alt={film.title} />
           <div className="card-rank">{index + 1}</div>

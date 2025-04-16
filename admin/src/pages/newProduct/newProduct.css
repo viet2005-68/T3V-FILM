@@ -2,11 +2,41 @@
     flex: 4;
 }
 
+.apiFind {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.apiFind>input {
+    padding: 10px;
+}
+
+.addMovieContainer {
+    display: flex;
+}
+
 .addProductForm {
     margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
+    flex: 1;
 }
+
+.moviePreview {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.moviePreview img {
+    max-width: 100%;
+}
+
 
 .addProductItem {
     width: 250px;

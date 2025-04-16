@@ -53,6 +53,12 @@ export default function ProductList() {
     ];
     return (
         <div className="productList">
+            <div style={{ marginBottom: "30px", padding: "20px" }} className="productTitleContainer">
+                <h1 className="productTitle">Films</h1>
+                <Link to="/newProduct">
+                    <button className="productAddButton">Create</button>
+                </Link>
+            </div>
             <DataGrid
                 rows={movies}
                 disableRowSelectionOnClick

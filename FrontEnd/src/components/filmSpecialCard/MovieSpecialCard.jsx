@@ -27,7 +27,7 @@ const MovieSpecialCard = ({ film_id, index }) => {
       </div>
 
       <div className="info">
-        <h3 className="rank">{index + 1}</h3>
+        <h3 className="rank">{index}</h3>
         <div className="titles">
           <h4 className="title">{film.title}</h4>
           <p className="meta">
