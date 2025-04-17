@@ -4,6 +4,7 @@ import Home from "./pages/home/Home.jsx";
 import Login from "./pages/login/Login.jsx";
 import Register from "./pages/register/Register.jsx";
 import Watch from "./pages/watch/Watch.jsx";
+import Search from "./pages/search/Search.jsx";
 import {
   BrowserRouter as Router,
   Routes,
@@ -46,6 +47,7 @@ function App() {
           path="/login"
           element={!user ? <Login /> : <Navigate to="/" />}
         />
+        <Route path="/search" element={<Search/>}/>
       </Routes>
       <Chatbot />
     </Router>

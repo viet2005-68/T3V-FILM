@@ -1,0 +1,95 @@
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #191b24;
+    color: #fff;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #292c38;
+    }
+  }
+
+  .filter-elements {
+    border: 1px solid #fff;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    display: none;
+    width: fit-content;
+    max-width: 100%;
+
+    &.show {
+      display: block;
+    }
+
+    // Style chung cho MUI Select
+    .MuiFormControl-root {
+      min-width: 140px;
+
+      .MuiInputLabel-root {
+        color: white;
+      }
+
+      .MuiOutlinedInput-root {
+        color: white;
+        fieldset {
+          border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        &:hover fieldset {
+          border-color: white;
+        }
+
+        &.Mui-focused fieldset {
+          border-color: red;
+        }
+      }
+
+      .MuiSelect-icon {
+        color: white;
+      }
+
+      .MuiMenuItem-root {
+        color: black; // dropdown item
+      }
+    }
+
+    // Responsive style
+    @media (max-width: 600px) {
+      .MuiFormControl-root {
+        width: 100%;
+      }
+    }
+  }
+
+  .filter-btn {
+    background-color: red;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+
+    &:hover {
+      background-color: darkred;
+    }
+  }
+
+  .reset-btn {
+    border-color: red;
+    color: red;
+    font-weight: 500;
+
+    &:hover {
+      border-color: darkred;
+      color: darkred;
+    }
+  }
+}
