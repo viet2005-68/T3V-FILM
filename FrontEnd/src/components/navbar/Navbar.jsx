@@ -29,7 +29,7 @@ export default function Navbar() {
       <div className="container">
         <div className="left">
           <img src="https://freeimghost.net/images/2025/04/13/favicon.png" alt="favicon" border="0" />
-          <Link to="/" className="link">
+          <Link to="/home" className="link">
             <span>Homepage</span>
           </Link>
           <Link to="/series" className="link">
@@ -44,21 +44,21 @@ export default function Navbar() {
         <div className="right">
           <form onSubmit={handleSearch} className="navbar-search-form">
             <input
-                type="text"
-                placeholder="Tìm phim..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
+              type="text"
+              placeholder="Tìm phim..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
             <button type="submit" className="search-btn">
-              <Search className="icon"/>
+              <Search className="icon" />
             </button>
           </form>
 
           <span>KID</span>
-          <Notifications className="icon"/>
-          <img src={JSON.parse(localStorage.getItem("user")).profilePic}/>
+          <Notifications className="icon" />
+          <img src={JSON.parse(localStorage.getItem("user")).profilePic} />
           <div className="profile">
-            <ArrowDropDown className="icon"/>
+            <ArrowDropDown className="icon" />
             <div className="options">
               <span>Settings</span>
               <span onClick={() => dispatch(logout())}>Logout</span>

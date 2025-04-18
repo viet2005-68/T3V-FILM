@@ -9,8 +9,8 @@ export default function Login() {
   const { dispatch } = useContext(AuthContext);
   const handleLogin = (e) => {
     e.preventDefault();
-    //login({ email, password }, dispatch);
-     dispatch({ type: 'LOGIN', payload: { email, password } });
+    login({ email, password }, dispatch);
+    dispatch({ type: 'LOGIN', payload: { email, password } });
   };
 
   return (
