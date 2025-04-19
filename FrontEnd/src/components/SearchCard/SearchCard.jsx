@@ -1,5 +1,5 @@
 import "./searchcard.scss";
-import {useRef, useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -7,30 +7,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import InfoIcon from "@mui/icons-material/Info";
 import {Link} from "react-router-dom";
 
-function handlePopup(card) {
-    const popup = card.querySelector(".movie-popup");
-    const rect = popup.getBoundingClientRect();
-    const padding = 16;
-
-    // Reset transform trước để đo chính xác
-    popup.style.transform = "translateX(0)";
-
-    const overflowRight = rect.right - window.innerWidth + padding;
-    const overflowLeft = rect.left - padding;
-
-    if (overflowRight > 0) {
-        popup.style.transform = `translateX(-${overflowRight}px)`;
-    } else if (overflowLeft < 0) {
-        popup.style.transform = `translateX(${Math.abs(overflowLeft)}px)`;
-    }
-}
-
 function Popup({movie}) {
-    const cardRef = useRef();
-
-    const onHover = () => {
-        handlePopup(cardRef.current);
-    };
     return (
         <div className="movie-popup">
             <div className="popup-poster-wrapper">
@@ -91,7 +68,7 @@ function Popup({movie}) {
     );
 }
 
-export default function SearchCard({movieId, index}) {
+export default function SearchCard({movieId}) {
     const [movie, setMovie] = useState({});
 
     useEffect(() => {

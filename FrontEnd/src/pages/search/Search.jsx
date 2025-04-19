@@ -1,5 +1,4 @@
 import Navbar from "../../components/navbar/Navbar.jsx";
-import List from "../../components/List/List.jsx";
 import Filter from "../../components/Filter/Filter.jsx";
 import SearchCard from "../../components/SearchCard/SearchCard.jsx";
 import {MdManageSearch} from "react-icons/md";
@@ -22,31 +21,7 @@ function Header({query}) {
     );
 }
 
-function Tab({ selectedTab, onTabChange }) {
-    return (
-        <div className="row-tabs-container">
-            <a
-                className={selectedTab === "movies" ? "active" : ""}
-                onClick={() => onTabChange("movies")}
-            >
-                Phim
-            </a>
-            <a
-                className={selectedTab === "actors" ? "active" : ""}
-                onClick={() => onTabChange("actors")}
-            >
-                Diễn viên
-            </a>
-        </div>
-    );
-}
-
-
-
 export default function Search() {
-    const [query, setQuery] = useState("");
-    const [lists, setLists] = useState([]);
-    const [genre, setGenre] = useState(null);
     const [allMovie, setAllMovie] = useState([]);
     const [searchMovies, setSearchMovies] = useState([]);
     const [page, setPage] = useState(0);
@@ -55,7 +30,6 @@ export default function Search() {
     const searchParams = new URLSearchParams(location.search);
     const searchQuery = searchParams.get("query") || "";
 
-    const moviesPerPage = 8;
     useEffect(() => {
         const getSearchMovies = async () => {
             try {
@@ -109,7 +83,7 @@ export default function Search() {
            <div className="tab-content">
                 <Filter/>
                {searchMovies.length === 0 && (
-                   <p style={{ color: "#fff", marginTop: "1rem" }}>Không tìm thấy phim {query} nào.</p>
+                   <p style={{ color: "#fff", marginTop: "1rem" }}>Không tìm thấy phim {searchQuery} nào.</p>
                )}
                <Box
                     sx={{
@@ -132,6 +106,7 @@ export default function Search() {
                             </Box>
                         ))}
                 </Box>
+               {searchMovies.length > rowsPerPage && (
                 <TablePagination className="pagination"
                                  component="div"
                                  count={searchMovies.length}
@@ -147,7 +122,8 @@ export default function Search() {
                                          color: 'white',          // Icon mũi tên
                                      },
                                  }}
-                />
+                />)
+               }
             </div>
         </div>
     </div>);
