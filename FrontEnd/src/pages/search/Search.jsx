@@ -24,6 +24,7 @@ function Header({query}) {
 export default function Search() {
     const [allMovie, setAllMovie] = useState([]);
     const [searchMovies, setSearchMovies] = useState([]);
+    const [filteredMovies, setFilteredMovies] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const location = useLocation();
@@ -39,6 +40,7 @@ export default function Search() {
                     },
                 });
                 setSearchMovies(response.data);
+                setFilteredMovies(response.data);
             } catch (error) {
                 console.error(error);
             }
@@ -68,6 +70,17 @@ export default function Search() {
 
         getAllMovie();
     }, []);
+
+    const handleFilterAplly = (filters) => {
+        let result = [...searchMovies];
+        if (filters.genre !== "Tất cả") {
+            result = result.filter((movie) => movie.genre === filters.genre.toLowerCase());
+        }
+        if(filters.year !== "Tất cả") {
+            result = result.filter((movie) => movie.year === filters.year);
+        }
+        setFilteredMovies(result);
+    }
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -81,8 +94,8 @@ export default function Search() {
         <div className="search-content">
             <Header query={searchQuery}/>
            <div className="tab-content">
-                <Filter/>
-               {searchMovies.length === 0 && (
+                <Filter onFilterApply={handleFilterAplly}/>
+               {filteredMovies.length === 0 && (
                    <p style={{ color: "#fff", marginTop: "1rem" }}>Không tìm thấy phim {searchQuery} nào.</p>
                )}
                <Box
@@ -98,7 +111,7 @@ export default function Search() {
                         rowGap: 0,
                     }}
                 >
-                    {searchMovies
+                    {filteredMovies
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((movie, index) => (
                             <Box key={movie._id} sx={{ overflow: "visible" }}>
@@ -106,10 +119,10 @@ export default function Search() {
                             </Box>
                         ))}
                 </Box>
-               {searchMovies.length > rowsPerPage && (
+               {filteredMovies.length > rowsPerPage && (
                 <TablePagination className="pagination"
                                  component="div"
-                                 count={searchMovies.length}
+                                 count={filteredMovies.length}
                                  page={page}
                                  onPageChange={handleChangePage}
                                  rowsPerPage={rowsPerPage}

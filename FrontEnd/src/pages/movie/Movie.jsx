@@ -4,13 +4,17 @@ import Navbar from "../../components/navbar/Navbar"
 import { FavoriteBorder, Favorite, PlayArrow, Add, Share, Stars, Comment, Notes, PlayArrowOutlined } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import ReviewPanel from "../../components/ReviewPanel/ReviewPanel";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function Movie() {
     const [reviewOpen, setReviewOpen] = useState(false)
     const location = useLocation()
     const [movie, setMovie] = useState(location.state.movie)
+
+    useEffect(() => {
+        setMovie(location.state.movie)
+    }, [location.state.movie]);
 
     const calculateRating = (reviews) => {
         let avg = 0

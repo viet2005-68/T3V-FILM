@@ -10,6 +10,7 @@
     margin-right: 15px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.4);
 
     input {
       background-color: transparent;
@@ -44,6 +45,13 @@
       }
     }
   }
+  &.scrolled {
+    .navbar-search-form {
+      background-color: rgba(0, 0, 0, 0.6);
+      transition: all 0.3s ease;
+    }
+  }
+
 
   .search-dropdown {
     position: absolute;

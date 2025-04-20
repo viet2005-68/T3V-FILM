@@ -11,14 +11,12 @@ import {
 import "./filter.scss";
 
 const filterOptions = {
-    country: ["Tất cả", "Anh", "Mỹ", "Hàn Quốc", "Nhật Bản"],
-    genre: ["Tất cả", "Hành động", "Tình cảm", "Kinh dị"],
+    genre: ["Tất cả", "Action", "Fantasy", "Comedy", "Romance"],
     year: ["Tất cả", "2024", "2023", "2022"],
 };
 
 export default function Filter({ onFilterApply }) {
     const [filters, setFilters] = useState({
-        country: "Tất cả",
         genre: "Tất cả",
         year: "Tất cả",
     });
@@ -39,7 +37,6 @@ export default function Filter({ onFilterApply }) {
 
     const handleReset = () => {
         setFilters({
-            country: "Tất cả",
             genre: "Tất cả",
             year: "Tất cả",
         });
@@ -53,6 +50,7 @@ export default function Filter({ onFilterApply }) {
             </div>
 
             <div className={`filter-elements ${showFilters ? "show" : ""}`}>
+              <div className={"filter-wrapper"}>
                 <Box
                     sx={{
                         display: "flex",
@@ -98,6 +96,7 @@ export default function Filter({ onFilterApply }) {
                         Reset
                     </Button>
                 </Box>
+              </div>
             </div>
         </div>
     );

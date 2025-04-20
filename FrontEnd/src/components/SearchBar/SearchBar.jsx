@@ -100,7 +100,8 @@ export default function SearchBar({ isScrolled }) {
   const handleSelectMovie = (movie) => {
     setSearchTerm(movie.title);
     setIsDropdownVisible(false);
-    navigate(`/search?query=${encodeURIComponent(movie.title)}`);
+    console.log(movie);
+    navigate(`/movie`, {state: {movie: movie}});
     setSearchTerm("");
   };
 
