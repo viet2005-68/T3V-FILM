@@ -4,6 +4,7 @@ import DefaultLayout from "../layouts/DefaultLayout"
 import Home from "../pages/home/Home"
 import Movie from "../pages/movie/Movie"
 import Search from "../pages/search/Search"
+import Profile from "../pages/profile/Profile"
 
 const authed = {
     element: <Authed />,
@@ -42,7 +43,17 @@ const authed = {
         {
             element: <Search />,
             path: "/search"
-        }
+        },
+        {
+            element: <DefaultLayout />,
+            path: '/profile',
+            children: [
+                {
+                    path: "",
+                    element: <Profile />
+                }
+            ]
+        },
     ]
 }
 

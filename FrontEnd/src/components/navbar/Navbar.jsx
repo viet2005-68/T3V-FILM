@@ -60,6 +60,11 @@ export default function Navbar() {
           <div className="profile">
             <ArrowDropDown className="icon" />
             <div className="options">
+              <Link style={{
+                padding: "10px 0px"
+              }} className="link" to="/profile">
+                <span>Profile</span>
+              </Link>
               <span>Settings</span>
               <span onClick={() => dispatch(logout())}>Logout</span>
             </div>
