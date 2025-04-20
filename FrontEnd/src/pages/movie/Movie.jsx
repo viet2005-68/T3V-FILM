@@ -1,6 +1,6 @@
 import "./movie.scss";
 import { useLocation } from "react-router-dom";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useContext } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import {
   FavoriteBorder,
@@ -17,14 +17,15 @@ import { Link } from "react-router-dom";
 import ReviewPanel from "../../components/ReviewPanel/ReviewPanel";
 import { useState } from "react";
 import axios from "axios";
+import { AuthContext } from "../../authContext/AuthContext";
 
 export default function Movie() {
+  const { user } = useContext(AuthContext)
   const [reviewOpen, setReviewOpen] = useState(false)
   const location = useLocation()
   const [movie, setMovie] = useState(location.state.movie)
   const commentStart = useRef()
   console.log(movie)
-
   const calculateRating = (reviews) => {
     let avg = 0;
     for (let review of reviews) {
@@ -60,6 +61,25 @@ export default function Movie() {
     }
   }
 
+  const handleFavorite = async () => {
+    try {
+      const res = await axios.put(`/api/users/favorites/${user._id}`, { movieId: movie._id }, {
+        headers: {
+          token:
+            "Bearer " +
+            JSON.parse(localStorage.getItem("user")).accessToken,
+        }
+      })
+      const newUser = res.data
+      newUser.accessToken = JSON.parse(localStorage.getItem("user")).accessToken
+      localStorage.setItem("user", JSON.stringify(newUser))
+      window.location.reload()
+    }
+    catch (err) {
+      console.log(err)
+    }
+  }
+
   return (
     <>
       {reviewOpen && (
@@ -69,7 +89,6 @@ export default function Movie() {
           movie={{ ...movie, rating: calculateRating(movie.reviews) }}
         />
       )}
-      <Navbar />
       <div
         style={{
           backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0), var(--main-color)), url("${movie.img}")`,
@@ -109,9 +128,9 @@ export default function Movie() {
                   Watch Now
                 </div>
               </Link>
-              <div className="movieButton">
-                <Favorite />
-                Favorite
+              <div className="movieButton" onClick={handleFavorite}>
+                {user?.favorites.includes(movie._id) ? <Favorite /> : <FavoriteBorder />}
+                {user?.favorites.includes(movie._id) ? "Unfavorite" : "Favorite"}
               </div>
               <div className="movieButton">
                 <Add />

@@ -16,11 +16,15 @@ export default function Home({ type }) {
   const [topMovie, setTopMovie] = useState([]);
 
   useEffect(() => {
+    const getPythonApi = async () => {
+      const res = await axios.get('http://127.0.0.1:8000/')
+      console.log(res.data)
+    }
+
     const getRandomLists = async () => {
       try {
         const res = await axios.get(
-          `/api/lists${type ? "?type=" + type : ""}${
-            genre ? "&genre=" + genre : ""
+          `/api/lists${type ? "?type=" + type : ""}${genre ? "&genre=" + genre : ""
           }`,
           {
             headers: {
@@ -67,6 +71,7 @@ export default function Home({ type }) {
     getRandomLists();
     getAllMovie();
     getTopMovies();
+    getPythonApi();
   }, [type, genre]);
 
   const sampleFilms = [
@@ -146,7 +151,6 @@ export default function Home({ type }) {
 
   return (
     <div className="home">
-      <Navbar />
       <Featured type={type} setGenre={setGenre} />
       <List
         list={{
@@ -158,7 +162,7 @@ export default function Home({ type }) {
         <List key={list._id} list={list} />
       ))}
       <TrendingList films={topMovie} title={"Most Popular"} />
-      <TrendingList films={allMovie} />
+      <TrendingList films={allMovie} title={"Recommended For You"} />
       <FilmSpecialList movies={allMovie} />
     </div>
   );
