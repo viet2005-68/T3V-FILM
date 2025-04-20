@@ -13,7 +13,9 @@ import {
 import { AuthContext } from "./authContext/AuthContext.jsx";
 import Movie from "./pages/movie/Movie.jsx";
 import Chatbot from "./Chatbot/Chatbot.jsx";
-
+import EmailVerificationPage from "./pages/login/EmailVerificationPage.jsx";
+import ForgotPasswordPage from "./pages/login/ForgetPasswordPage.jsx";
+import ResetPasswordPage from "./pages/login/ResetPasswordPage.jsx";
 function App() {
   const { user } = useContext(AuthContext);
   return (
@@ -46,6 +48,26 @@ function App() {
           path="/login"
           element={!user ? <Login /> : <Navigate to="/" />}
         />
+        <Route
+            path='/forgot-password'
+            element={
+                <ForgotPasswordPage />
+            }
+        />
+        <Route
+            path='/verify-email'
+            element={
+                <EmailVerificationPage />
+            }
+        />
+          <Route
+              path='/reset-password/:token'
+              element={
+                      <ResetPasswordPage />
+              }
+          />
+        <Route path='*' element={<Navigate to='/register' replace />} />
+
       </Routes>
       <Chatbot />
     </Router>

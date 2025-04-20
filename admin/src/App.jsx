@@ -47,6 +47,7 @@ function App() {
           <Route path="/product/:productsId" element={user ? <Product /> : <Navigate to="/login" />} />
           <Route path="/newproduct" element={user ? <NewProduct /> : <Navigate to="/login" />} />
           <Route path="/newList" element={user ? <NewList /> : <Navigate to="/login" />} />
+          <Route path='*' element={user ? <Home /> : <Navigate to='/login' replace />} />
         </Route>
       </Routes>
     </Router>

@@ -1,0 +1,99 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+                  to bottom,
+                  rgba(0, 0, 0, 0) 0%,
+                  rgba(0, 0, 0, 1) 100%
+  ),
+  url("https://cdn.wallpapersafari.com/24/74/zgeTuV.jpg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    filter: blur(50px);
+    z-index: -1;
+  }
+
+  .title {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    color: #eee;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+
+  .submit-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(to right, #10B981, #059669);
+    color: white;
+    font-weight: bold;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+
+  }
+
+  .input {
+    width: 100%;
+    height: 20px;
+    padding: 0.75rem ;
+    border-radius: 0.75rem;
+    border: none;
+    font-size: 1.125rem;
+    font-weight: 500;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: black;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &::placeholder {
+      color: #999;
+      font-weight: 400;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.4);
+    }
+  }
+  .small-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #e0e0e0;
+    border-top: 3px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+}

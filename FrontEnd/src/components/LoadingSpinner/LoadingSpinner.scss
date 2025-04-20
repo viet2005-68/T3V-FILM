@@ -1,0 +1,22 @@
+/* Popup overlay để làm nền mờ nhẹ */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2); /* Mờ nhẹ */
+  backdrop-filter: blur(3px); /* Hiệu ứng mờ */
+}
+
+/* Vòng tròn quay */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e0e0e0; /* Viền xám nhạt */
+  border-top: 4px solid #3498db; /* Viền xanh */
+  border-radius: 50%;
+}

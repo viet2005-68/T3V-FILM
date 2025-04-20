@@ -2,15 +2,25 @@ import { useContext, useState } from "react";
 import "./login.scss";
 import { AuthContext } from "../../authContext/AuthContext";
 import { login } from "../../authContext/apiCalls";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { dispatch } = useContext(AuthContext);
-  const handleLogin = (e) => {
+  const { error, dispatch } = useContext(AuthContext);
+  const handleLogin = async (e) => {
     e.preventDefault();
-    //login({ email, password }, dispatch);
-     dispatch({ type: 'LOGIN', payload: { email, password } });
+    try {
+     await login({ email, password }, dispatch);
+
+      dispatch({ type: "LOGIN_SUCCESS", payload: {email, password} });
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        alert(err.response.data.message);
+      } else {
+        alert("Something went wrong!");
+      }
+    }
   };
 
   return (
@@ -39,6 +49,11 @@ export default function Login() {
           <span className="sign-up-now">
             New to Netflix? <b>Sign up now.</b>
           </span>
+          <div>
+          <Link to = '/forgot-password' className="forgot-password">
+            Forgot password?
+          </Link>
+          </div>
           <small>
             This page is protected by Google reCAPTCHA to ensure you're not a
             bot. <b>Learn more</b>.

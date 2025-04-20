@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Login from '../src/pages/login/login';
 import { AuthContext } from '../src/authContext/AuthContext';
 import { vi } from 'vitest';
+import {BrowserRouter} from "react-router-dom";
 
 // Mock login function to avoid actual API calls during testing
 vi.mock('../src/authContext/apiCalls', () => ({
@@ -13,9 +14,11 @@ describe('Login Component', () => {
 
     beforeEach(() => {
         render(
-            <AuthContext.Provider value={{ dispatch: mockDispatch }}>
-                <Login />
-            </AuthContext.Provider>
+            <BrowserRouter>
+                <AuthContext.Provider value={{ dispatch: mockDispatch }}>
+                    <Login />
+                </AuthContext.Provider>
+            </BrowserRouter>
         );
     });
 

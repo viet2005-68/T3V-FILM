@@ -23,6 +23,15 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isVerified: {
+        type: Boolean,
+        default: false,
+    },
+   // lastPasswordChange: { type: Date, default: Date.now },
+    resetPasswordToken: String,
+    resetPasswordExpiresAt: Date,
+    verificationToken: String,
+    verificationTokenExpiresAt: Date,
     favorites: [
         { type: mongoose.Schema.Types.ObjectId, ref: "Movie" }
     ]

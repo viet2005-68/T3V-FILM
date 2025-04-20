@@ -28,7 +28,7 @@ export default function Register() {
         password: passwordRef.current.value,
         username: usernameRef.current.value,
       });
-      navigate("/login");
+      navigate("/verify-email");
     } catch (err) {
       console.log(err);
     }
