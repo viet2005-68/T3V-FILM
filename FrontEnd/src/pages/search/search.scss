@@ -1,8 +1,9 @@
 .search {
   background-color: var(--main-color);
-  overflow: hidden;
+
   padding-bottom: 0;
   .search-content {
+    height: 100%;
     padding-top: 6rem;
     padding-left: 2rem;
     padding-right: 2rem;

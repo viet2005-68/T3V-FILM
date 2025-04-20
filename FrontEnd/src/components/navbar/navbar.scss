@@ -39,40 +39,6 @@
       display: flex;
       align-items: center;
 
-      .navbar-search-form {
-        display: flex;
-        align-items: center;
-        background-color: #333;
-        padding: 4px 8px;
-        border-radius: 4px;
-        margin-right: 15px;
-
-        input {
-          background: transparent;
-          border: none;
-          color: white;
-          outline: none;
-          width: 150px;
-          font-size: 14px;
-
-          &::placeholder {
-            color: #aaa;
-          }
-        }
-
-        .search-btn {
-          background: none;
-          border: none;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-
-          .icon {
-            color: white;
-          }
-        }
-      }
-
       .icon {
         margin: 0px 15px;
         cursor: pointer;
