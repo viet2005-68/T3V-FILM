@@ -101,7 +101,7 @@ export default function SearchBar({ isScrolled }) {
     setSearchTerm(movie.title);
     setIsDropdownVisible(false);
     console.log(movie);
-    navigate(`/movie`, {state: {movie: movie}});
+    navigate(`/movie/${movie._id}`);
     setSearchTerm("");
   };
 
