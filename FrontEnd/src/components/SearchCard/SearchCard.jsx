@@ -1,11 +1,11 @@
 import "./searchcard.scss";
-import {useRef, useState, useEffect} from "react";
+import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import InfoIcon from "@mui/icons-material/Info";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function handlePopup(card) {
     const popup = card.querySelector(".movie-popup");
@@ -25,7 +25,7 @@ function handlePopup(card) {
     }
 }
 
-function Popup({movie}) {
+function Popup({ movie }) {
     const cardRef = useRef();
 
     const onHover = () => {
@@ -45,13 +45,13 @@ function Popup({movie}) {
                 <h3>{movie.title}</h3>
 
                 <div className="popup-buttons">
-                    <Link to={{pathname: "/watch"}} state={{movie: movie}}>
+                    <Link to={{ pathname: `/watch` }} state={{ movie: movie }}>
 
                         <Button
                             className="watch-btn"
                             size="small"
                             color="red"
-                            startIcon={<PlayArrowIcon fontSize="inherit"/>}
+                            startIcon={<PlayArrowIcon fontSize="inherit" />}
                         >
                             Xem ngay
                         </Button>
@@ -61,20 +61,20 @@ function Popup({movie}) {
                         variant="outlined"
                         size="small"
                         color="neutral"
-                        startIcon={<FavoriteIcon fontSize="inherit"/>}
+                        startIcon={<FavoriteIcon fontSize="inherit" />}
                     >
                         Thích
                     </Button>
-                    <Link to={{pathname: "/movie"}} state={{movie: movie}}>
-                    <Button
-                        className="info"
-                        variant="outlined"
-                        size="small"
-                        color="neutral"
-                        startIcon={<InfoIcon fontSize="inherit"/>}
-                    >
-                        Chi tiết
-                    </Button>
+                    <Link to={{ pathname: `/movie/${movie._id}` }}>
+                        <Button
+                            className="info"
+                            variant="outlined"
+                            size="small"
+                            color="neutral"
+                            startIcon={<InfoIcon fontSize="inherit" />}
+                        >
+                            Chi tiết
+                        </Button>
                     </Link>
                 </div>
 
@@ -86,12 +86,12 @@ function Popup({movie}) {
                     <span>HD</span>
                 </div>
             </div>
-        </div>
+        </div >
 
     );
 }
 
-export default function SearchCard({movieId, index}) {
+export default function SearchCard({ movieId, index }) {
     const [movie, setMovie] = useState({});
 
     useEffect(() => {
@@ -120,7 +120,7 @@ export default function SearchCard({movieId, index}) {
                 />
                 <h3>{movie.title}</h3>
             </div>
-            <Popup movie={movie}/>
+            <Popup movie={movie} />
         </div>
     );
 }

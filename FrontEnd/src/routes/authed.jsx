@@ -31,7 +31,7 @@ const authed = {
             path: '/movie',
             children: [
                 {
-                    path: "",
+                    path: ":id",
                     element: <Movie />
                 }
             ]

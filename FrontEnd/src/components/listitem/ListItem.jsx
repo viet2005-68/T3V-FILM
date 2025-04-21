@@ -35,7 +35,7 @@ export default function ListItem({ index, item }) {
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
-      <Link to={{ pathname: `/movie` }} state={{ movie: movie }}>
+      <Link to={{ pathname: `/movie/${movie._id}` }}>
         <div
           className="listItem"
         >
