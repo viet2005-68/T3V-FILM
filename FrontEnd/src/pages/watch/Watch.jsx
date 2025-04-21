@@ -8,7 +8,7 @@ export default function Watch() {
     const vid = location.state.video;
     return (
         <div className="watch">
-            <Link to="/movie" state={{ movie: movie }}>
+            <Link to={`/movie/${movie._id}`}>
                 <div className="back">
                     <ArrowBackOutlined />
                     Home

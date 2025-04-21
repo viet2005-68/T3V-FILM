@@ -1,5 +1,5 @@
 import "./movie.scss";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useRef, useEffect, useContext } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import {
@@ -22,10 +22,10 @@ import { AuthContext } from "../../authContext/AuthContext";
 export default function Movie() {
   const { user } = useContext(AuthContext)
   const [reviewOpen, setReviewOpen] = useState(false)
-  const location = useLocation()
-  const [movie, setMovie] = useState(location.state.movie)
+  const { id } = useParams();
+  const [movie, setMovie] = useState(null)
   const commentStart = useRef()
-  console.log(movie)
+
   const calculateRating = (reviews) => {
     let avg = 0;
     for (let review of reviews) {
@@ -35,8 +35,26 @@ export default function Movie() {
   };
 
   useEffect(() => {
+    console.log("HELo")
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+    const getMovie = async () => {
+      try {
+        const res = await axios.get(`/api/movies/${id}`, {
+          headers: {
+            token:
+              "Bearer " +
+              JSON.parse(localStorage.getItem("user")).accessToken,
+          }
+        })
+        setMovie(prev => res.data)
+        console.log(res)
+      }
+      catch (err) {
+        console.log(err)
+      }
+    }
+    getMovie()
+  }, [id]);
 
   const submitReview = async (review) => {
     try {
@@ -81,7 +99,9 @@ export default function Movie() {
   }
 
   return (
-    <>
+    <>{!movie ? (
+      <div>Loading...</div>
+    ) : (<>
       {reviewOpen && (
         <ReviewPanel
           onSubmit={submitReview}
@@ -149,7 +169,7 @@ export default function Movie() {
             </div>
             <div onClick={() => setReviewOpen(true)} className="movieRating">
               <Stars />
-              <h3>{calculateRating(movie.reviews)}</h3>
+              <h3>{calculateRating(movie.reviews).toFixed(2)}</h3>
               <p>Rate Now</p>
             </div>
           </div>
@@ -193,5 +213,6 @@ export default function Movie() {
         </div>
       </div>
     </>
+    )}</>
   );
 }

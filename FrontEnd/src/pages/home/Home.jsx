@@ -42,13 +42,24 @@ export default function Home({ type }) {
 
     const getAllMovie = async () => {
       try {
-        const res = await axios.get("/api/movies", {
-          headers: {
-            token:
-              "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
-          },
-        });
-        setAllMovie(res.data);
+        if (genre) {
+          const res = await axios.get(`/api/movies?genre=${genre}`, {
+            headers: {
+              token:
+                "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+            },
+          });
+          setAllMovie(res.data);
+        }
+        else {
+          const res = await axios.get("/api/movies?limit=10", {
+            headers: {
+              token:
+                "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+            },
+          });
+          setAllMovie(res.data);
+        }
       } catch (err) {
         console.log(err);
       }
