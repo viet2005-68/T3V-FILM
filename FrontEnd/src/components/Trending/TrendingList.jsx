@@ -14,7 +14,7 @@ const TrendingList = ({ films, title }) => {
   const scroll = (direction) => {
     const { current } = scrollRef;
     if (!current) return;
-    const scrollAmout = 300;
+    const scrollAmout = 250;
     direction === "left"
       ? (current.scrollLeft -= scrollAmout)
       : (current.scrollLeft += scrollAmout);
@@ -22,16 +22,18 @@ const TrendingList = ({ films, title }) => {
   return (
     <div className="trending-list">
       <h2>{title}</h2>
-      <div className="scroll-wrapper">
+      <div className="scroll-wrapper-main">
         {showButtons && (
           <button className="scroll-btn left" onClick={() => scroll("left")}>
             <ArrowBackIosNewIcon />
           </button>
         )}
-        <div className="trending-scroll" ref={scrollRef}>
-          {films.map((film, index) => (
-            <TrendingCard key={film.id} filmId={film._id} index={index} />
-          ))}
+        <div className="scroll-wrapper">
+          <div className="trending-scroll" ref={scrollRef}>
+            {films.map((film, index) => (
+              <TrendingCard key={film.id} filmId={film._id} index={index} />
+            ))}
+          </div>
         </div>
         {showButtons && (
           <button className="scroll-btn right" onClick={() => scroll("right")}>

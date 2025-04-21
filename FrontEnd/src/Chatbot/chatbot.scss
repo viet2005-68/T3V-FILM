@@ -1,0 +1,182 @@
+.chatbot-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  background-color: #ffbb00; // màu vàng nổi bật
+  color: #000;
+  border: none;
+  border-radius: 50%;
+  padding: 0.8rem;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: scale(1.1);
+    background-color: #ffd700;
+  }
+
+  svg {
+    stroke-width: 2.5;
+  }
+}
+
+.chatbot-window {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  width: 360px;
+  max-height: 500px;
+  background: #1e1e2f;
+  border-radius: 1rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 998;
+  font-family: "Segoe UI", sans-serif;
+  width: 360px;
+  height: 500px;
+  animation: slideUp 0.3s ease;
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .chatbot-header {
+    background: #2b2b3c;
+    color: #ffe44d;
+    font-weight: bold;
+    padding: 1rem;
+    font-size: 1rem;
+    border-bottom: 1px solid #444;
+  }
+
+  .chatbot-messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    background: #1e1e2f;
+
+    .msg {
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 0.6rem;
+      border-radius: 12px;
+      max-width: 80%;
+      line-height: 1.4;
+      font-size: 0.9rem;
+
+      &.user {
+        background: #ffe44d;
+        color: #000;
+        margin-left: auto;
+        text-align: right;
+      }
+
+      &.bot {
+        background: #2b2b3c;
+        color: #fff;
+      }
+    }
+
+    .loading-spinner {
+      margin-right: 8px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  }
+
+  .chatbot-input {
+    display: flex;
+    border-top: 1px solid #444;
+    padding: 0.75rem;
+    background: #2b2b3c;
+
+    input {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border-radius: 20px;
+      border: none;
+      font-size: 0.9rem;
+      outline: none;
+      background-color: #fff;
+      color: #000;
+    }
+
+    button {
+      margin-left: 0.5rem;
+      background: #ffe44d;
+      border: none;
+      border-radius: 20px;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background: #ffce33;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+// ✨ Tỏa sáng vàng + rung nhẹ
+.chatbot-toggle {
+  animation: glowPulse 2s infinite ease-in-out,
+    gentleShake 4s infinite ease-in-out;
+}
+
+// Ánh sáng vàng nhịp nhàng
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 0px rgba(255, 200, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 18px 10px rgba(255, 200, 0, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(255, 200, 0, 0.4);
+  }
+}
+
+// Rung nhẹ theo chu kỳ
+@keyframes gentleShake {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(1px);
+  }
+  75% {
+    transform: translateY(-2px);
+  }
+}

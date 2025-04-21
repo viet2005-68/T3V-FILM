@@ -44,7 +44,7 @@ export default function Featured({ type, setGenre }) {
               <option value="crime">Crime</option>
               <option value="fantasy">Fantasy</option>
               <option value="historical">Historical</option>
-              <option value="horro">Horror</option>
+              <option value="horror">Horror</option>
               <option value="romance">Romance</option>
               <option value="sci-fi">Sci-fi</option>
               <option value="thriller">Thriller</option>

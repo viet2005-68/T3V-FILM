@@ -1,18 +1,18 @@
 import Navbar from "../../components/navbar/Navbar.jsx";
 import Filter from "../../components/Filter/Filter.jsx";
 import SearchCard from "../../components/SearchCard/SearchCard.jsx";
-import {MdManageSearch} from "react-icons/md";
-import {TablePagination, Box} from "@mui/material";
-import {useEffect, useState} from "react";
+import { MdManageSearch } from "react-icons/md";
+import { TablePagination, Box } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "./search.scss"
 
-function Header({query}) {
+function Header({ query }) {
     return (
         <div className="row-header">
             <div className="icon">
-                <MdManageSearch size={40} color="white"/>
+                <MdManageSearch size={40} color="white" />
             </div>
             <h3 className="category-name">
                 Kết quả tìm kiếm "{query || "Tất cả"}"
@@ -90,7 +90,7 @@ export default function Search() {
         setPage(0);
     };
     return (<div className="search">
-        <Navbar/>
+        <Navbar />
         <div className="search-content">
             <Header query={searchQuery}/>
            <div className="tab-content">

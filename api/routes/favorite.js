@@ -1,6 +1,24 @@
 const router = require('express').Router()
-const { verify } = require('jsonwebtoken')
+const verify = require('../verifyToken')
 const User = require('../models/User')
+
+// Get user's favorite list
+router.get('/:id', async (req, res) => {
+    try {
+        const id = req.params.id
+        const user = await User.findById(id).populate("favorites")
+
+        if (user) {
+            res.status(200).json(user?.favorites)
+        }
+        else {
+            res.status(404).json({ "Error": "User not found" })
+        }
+    }
+    catch (err) {
+        res.status(500).json(err)
+    }
+})
 
 //TOGGLE USER FAVORITE
 // body: {movieId: ...}

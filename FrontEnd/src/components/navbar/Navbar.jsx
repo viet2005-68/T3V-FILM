@@ -20,7 +20,7 @@ export default function Navbar() {
       <div className="container">
         <div className="left">
           <img src="https://freeimghost.net/images/2025/04/13/favicon.png" alt="favicon" border="0" />
-          <Link to="/" className="link">
+          <Link to="/home" className="link">
             <span>Homepage</span>
           </Link>
           <Link to="/series" className="link">
@@ -35,11 +35,16 @@ export default function Navbar() {
         <div className="right">
           <SearchBar isScrolled={isScrolled} />
           <span>KID</span>
-          <Notifications className="icon"/>
-          <img src={JSON.parse(localStorage.getItem("user")).profilePic}/>
+          <Notifications className="icon" />
+          <img src={JSON.parse(localStorage.getItem("user")).profilePic} />
           <div className="profile">
-            <ArrowDropDown className="icon"/>
+            <ArrowDropDown className="icon" />
             <div className="options">
+              <Link style={{
+                padding: "10px 0px"
+              }} className="link" to="/profile">
+                <span>Profile</span>
+              </Link>
               <span>Settings</span>
               <span onClick={() => dispatch(logout())}>Logout</span>
             </div>

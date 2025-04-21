@@ -16,6 +16,11 @@ export default function Home({ type }) {
   const [topMovie, setTopMovie] = useState([]);
 
   useEffect(() => {
+    const getPythonApi = async () => {
+      const res = await axios.get('http://127.0.0.1:8000/')
+      console.log(res.data)
+    }
+
     const getRandomLists = async () => {
       try {
         const res = await axios.get(
@@ -37,13 +42,24 @@ export default function Home({ type }) {
 
     const getAllMovie = async () => {
       try {
-        const res = await axios.get("/api/movies", {
-          headers: {
-            token:
-              "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
-          },
-        });
-        setAllMovie(res.data);
+        if (genre) {
+          const res = await axios.get(`/api/movies?genre=${genre}`, {
+            headers: {
+              token:
+                "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+            },
+          });
+          setAllMovie(res.data);
+        }
+        else {
+          const res = await axios.get("/api/movies?limit=10", {
+            headers: {
+              token:
+                "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+            },
+          });
+          setAllMovie(res.data);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -56,17 +72,17 @@ export default function Home({ type }) {
             token:
               "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
           },
-        })
-        setTopMovie(res.data)
-      }
-      catch (err) {
+        });
+        setTopMovie(res.data);
+      } catch (err) {
         console.log(err);
       }
-    }
+    };
 
     getRandomLists();
     getAllMovie();
     getTopMovies();
+    getPythonApi();
   }, [type, genre]);
 
   const sampleFilms = [
@@ -146,7 +162,6 @@ export default function Home({ type }) {
 
   return (
     <div className="home">
-      <Navbar />
       <Featured type={type} setGenre={setGenre} />
       <List
         list={{
@@ -158,8 +173,8 @@ export default function Home({ type }) {
         <List key={list._id} list={list} />
       ))}
       <TrendingList films={topMovie} title={"Most Popular"} />
-      <TrendingList films={allMovie} />
-      <FilmSpecialList movies={specialFilms} />
+      <TrendingList films={allMovie} title={"Recommended For You"} />
+      <FilmSpecialList movies={allMovie} />
     </div>
   );
 }

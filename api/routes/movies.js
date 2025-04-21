@@ -142,24 +142,40 @@ router.get("/:id", verify, async (req, res) => {
 // To get movies filtered by genre: call /api/movies?genre=YOUR_MOVIE_GENRE
 // To get movies filtered by title: call /api/movies?title=YOUR_MOVIE_NAME
 // To get movies filtered by year: call /api/movies?year=YOUR_MOVIE_YEAR
+// To get movies limited by a number: call /api/movies?limit=YOUR_LIMIT
 router.get("/", verify, async (req, res) => {
     const filter = {}
+
     if (req.query.genre) {
         filter.genre = req.query.genre
     }
+
     if (req.query.title) {
         filter.title = { $regex: req.query.title, $options: "i" }
     }
+
     if (req.query.year) {
         filter.year = req.query.year
     }
+
     try {
-        const movies = await Movie.find(filter).populate("reviews.user", "username profilePic")
+        let query = Movie.find(filter)
+            .sort({ createdAt: -1 })
+            .populate("reviews.user", "username profilePic")
+
+        if (req.query.limit) {
+            const limit = parseInt(req.query.limit)
+            if (!isNaN(limit)) {
+                query = query.limit(limit)
+            }
+        }
+
+        const movies = await query
         res.status(200).json(movies.reverse())
-    }
-    catch (err) {
-        res.status(500).json(err);
+    } catch (err) {
+        res.status(500).json(err)
     }
 })
+
 
 module.exports = router;

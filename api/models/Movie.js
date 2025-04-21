@@ -24,6 +24,9 @@ const MovieSchema = new mongoose.Schema({
             rating: { type: Number, min: 1, max: 5, required: true },
             createdAt: { type: Date, default: Date.now }
         }
+    ],
+    episodes: [
+        { type: String }
     ]
 }, { timestamps: true });
 

@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema({
     },
     profilePic: {
         type: String,
-        default: ""
+        default: "https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-88wkdmjrorckekha.jpg"
     },
     isAdmin: {
         type: Boolean,
@@ -25,7 +25,16 @@ const UserSchema = new mongoose.Schema({
     },
     favorites: [
         { type: mongoose.Schema.Types.ObjectId, ref: "Movie" }
-    ]
+    ],
+    gender: {
+        type: String,
+    },
+    favoriteGenre: {
+        type: String,
+    },
+    age: {
+        type: Number
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model("User", UserSchema);
