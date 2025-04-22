@@ -1,27 +1,28 @@
 Id,Title,Year,Limit,Genre,Avg rating,Total ratings
-67f6788d43e80aa15b5ea57e,Blue Box,2023,16,animation,0,0
-67f68129569a78139d11a995,Black Clover: Sword of the Wizard King,2023,15,action,4.5,2
-67f682bf569a78139d11a9ff,Jujutsu Kaisen 2,2023,16,fantasy,5.0,1
-67f683c3569a78139d11aa53,Invincible,2021,18,action,3.0,2
-67fa79fb33a4d45485852a61,Mobile Suit Gundam: The Witch from Mercury,2022,15,action,4.0,3
-67ff65bb5310f4a44095d22a,K-on! SS2,2011,13,comedy,5.0,2
-67ff68dfedb5f27e065e4b3d,Atri: My Dear Moments,2023,16,romance,4.0,5
-67ff72b012c27e4d72835abc,Re:Zero − Starting Life in Another World Season 3,2024,18,fantasy,4.5,2
-67fff2f7ba4a7f0f85006aaa,Angel Beats!,2010,16,comedy,4.666666666666667,3
-67fff754ba4a7f0f8500748e,"Love, Chunibyo & Other Delusions",2012,13,fantasy,5.0,1
-6803ef6d24511ad2320406b6,Violet Evergarden,2018,13,sci-fi,2.0,1
-6803f21c24511ad232041a8d,A Silent Voice,2016,16,romance,3.0,2
-6803fbb2074c8a7d7eb93c71,Tokyo Ghoul :re,2018,18,action,5.0,2
-6803fd00074c8a7d7eb946a0,Frieren: Beyond Journey's End,2023,13,fantasy,5.0,1
-68040628074c8a7d7eb95a88,Eighty Six,2021,13,action,3.0,2
-68052a656e01cc9265f4479c,Attack On Titan: The Last Attack,2024,18,action,2.6666666666666665,3
-68052b316e01cc9265f44935,Gosick,2011,13,romance,4.0,5
-68052c046e01cc9265f4568c,Your Name,2016,13,romance,3.25,4
-68052d5f6e01cc9265f461ad,Weathering With You,2019,13,romance,3.0,2
-68052ea66e01cc9265f4697d,Cyberpunk: Edgerunners,2022,18,sci-fi,1.0,2
-680530f66e01cc9265f48958,DAN DA DAN,2024,18,adventure,3.0,2
-680534467880425304c52ffa,Đao Kiếm Thần Vực Alicization,2018,13,adventure,0,0
-6805439e7880425304c59cc2,Dark Gathering,2023,18,horror,1.0,1
-680545317880425304c5a920,DEAD MOUNT DEATH PLAY,2023,18,horror,2.0,1
-680546087880425304c5b7b7,Asobi Asobase,2018,11,comedy,3.5,2
-68059a5f1baf0532247ed3d3,My Hero Academia: Vigilantes,2025,16,adventure,4.0,1
+67f6788d43e80aa15b5ea57e,Blue Box,2023,16,romance,2.5,2
+67f68129569a78139d11a995,Black Clover: Sword of the Wizard King,2023,15,action,3.3333333333333335,9
+67f682bf569a78139d11a9ff,Jujutsu Kaisen 2,2023,16,fantasy,3.2857142857142856,7
+67f683c3569a78139d11aa53,Invincible,2021,18,action,2.875,8
+67fa79fb33a4d45485852a61,Mobile Suit Gundam: The Witch from Mercury,2022,15,action,3.375,8
+67ff65bb5310f4a44095d22a,K-on! SS2,2011,13,comedy,4.142857142857143,7
+67ff68dfedb5f27e065e4b3d,Atri: My Dear Moments,2023,16,romance,3.7142857142857144,7
+67ff72b012c27e4d72835abc,Re:Zero − Starting Life in Another World Season 3,2024,18,fantasy,3.8,5
+67fff2f7ba4a7f0f85006aaa,Angel Beats!,2010,16,comedy,4.125,8
+67fff754ba4a7f0f8500748e,"Love, Chunibyo & Other Delusions",2012,13,fantasy,4.0,4
+6803ef6d24511ad2320406b6,Violet Evergarden,2018,13,sci-fi,1.75,4
+6803f21c24511ad232041a8d,A Silent Voice,2016,16,romance,2.5,4
+6803fbb2074c8a7d7eb93c71,Tokyo Ghoul :re,2018,18,action,4.25,4
+6803fd00074c8a7d7eb946a0,Frieren: Beyond Journey's End,2023,13,fantasy,4.25,4
+68040628074c8a7d7eb95a88,Eighty Six,2021,13,action,3.0,4
+68052a656e01cc9265f4479c,Attack On Titan: The Last Attack,2024,18,action,3.2857142857142856,7
+68052b316e01cc9265f44935,Gosick,2011,13,romance,3.857142857142857,7
+68052c046e01cc9265f4568c,Your Name,2016,13,romance,2.8181818181818183,11
+68052d5f6e01cc9265f461ad,Weathering With You,2019,13,romance,2.0,7
+68052ea66e01cc9265f4697d,Cyberpunk: Edgerunners,2022,18,sci-fi,1.2222222222222223,9
+680530f66e01cc9265f48958,DAN DA DAN,2024,18,adventure,3.0,9
+680534467880425304c52ffa,Đao Kiếm Thần Vực Alicization,2018,13,adventure,2.5714285714285716,7
+6805439e7880425304c59cc2,Dark Gathering,2023,18,horror,1.1111111111111112,9
+680545317880425304c5a920,DEAD MOUNT DEATH PLAY,2023,18,horror,1.25,8
+680546087880425304c5b7b7,Asobi Asobase,2018,11,comedy,3.3333333333333335,6
+68059a5f1baf0532247ed3d3,My Hero Academia: Vigilantes,2025,16,adventure,3.0,8
+68078d01c1f0e09c09d45304,Charlotte,2015,13,fantasy,1.0,2
