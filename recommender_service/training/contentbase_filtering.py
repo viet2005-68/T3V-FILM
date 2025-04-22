@@ -9,7 +9,7 @@ user_features = user_train_vec.shape[1]
 movie_features = movie_train_vec.shape[1]
 
 user_train, user_val, movie_train, movie_val, y_train, y_val = train_test_split(
-    user_train_vec, movie_train_vec, y_train_vec, test_size=0.2, shuffle=False
+    user_train_vec, movie_train_vec, y_train_vec, test_size=0.1, shuffle=True
 )
 
 def z_score_normalization(X):
@@ -49,11 +49,11 @@ model = dnn_model()
 model.summary()
 
 cost_fn = tf.keras.losses.MeanSquaredError()
-opt = tf.keras.optimizers.Adam(learning_rate=0.01)
+opt = tf.keras.optimizers.Adam(learning_rate=0.001)
 model.compile(optimizer=opt,
               loss=cost_fn)
 
-model.fit([user_train_scale, movie_train_scale], y_train, epochs=50)
+model.fit([user_train_scale, movie_train_scale], y_train, validation_data=([user_val_scale, movie_val_scale], y_val), epochs=50)
 print("-------------------TRAINING SETS--------------------------")
 print("-------------------PREDICTIONS----------------------------")
 print(model.predict([user_train_scale, movie_train_scale]))

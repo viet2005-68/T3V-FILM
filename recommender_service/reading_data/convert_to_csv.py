@@ -1,10 +1,16 @@
-from feature_extraction import user_movie_rating, user_features_map, movie_features_map
+from feature_extraction import compute_movie_features, compute_user_features, compute_user_movie_rating
+from read_data_from_mongodb import fetch_data_final
 from read_data_from_mongodb import GENRES
 import pandas as pd
 import sys
 import os
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+movies, users = fetch_data_final()
+movie_features_map = compute_movie_features(movies)
+user_features_map = compute_user_features(users=users, movies=movies)
+user_movie_rating = compute_user_movie_rating(movies)
 
 # Write movie features data to csv file
 movie_columns = ['Id', 'Title', 'Year', 'Limit', 'Genre', 'Avg rating', 'Total ratings']

@@ -63,7 +63,7 @@ const TrendingCard = ({ filmId, index }) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setIsHover(false)}
     >
-      <Link to="/movie" state={{ movie: film }}>
+      <Link to={`/movie/${film._id}`}>
         <div
           className={`trending-card ${isHover ? "hovered" : ""} ${alignRight ? "align-right" : ""
             }`}
