@@ -8,7 +8,7 @@ app = FastAPI()
 
 origins = [
     "http://localhost:5173",  # React dev server
-    "http://localhost:8800",  # React dev server
+    "http://localhost:8800",  # Backend dev server
 ]
 
 app.add_middleware(
