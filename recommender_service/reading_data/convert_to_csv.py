@@ -1,76 +1,90 @@
+import os 
+import sys
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../reading_data'))
+sys.path.append(project_root)
+print(project_root)
 from feature_extraction import compute_movie_features, compute_user_features, compute_user_movie_rating
 from read_data_from_mongodb import fetch_data_final
 from read_data_from_mongodb import GENRES
 import pandas as pd
-import sys
-import os
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+def populate_movie_csv():
+    movies, _ = fetch_data_final()
+    movie_features_map = compute_movie_features(movies)
 
-movies, users = fetch_data_final()
-movie_features_map = compute_movie_features(movies)
-user_features_map = compute_user_features(users=users, movies=movies)
-user_movie_rating = compute_user_movie_rating(movies)
+    # Write movie features data to csv file
+    movie_columns = ['Id', 'Title', 'Year', 'Limit', 'Genre', 'Avg rating', 'Total ratings']
+    df_movie = pd.DataFrame(columns = movie_columns)
 
-# Write movie features data to csv file
-movie_columns = ['Id', 'Title', 'Year', 'Limit', 'Genre', 'Avg rating', 'Total ratings']
-df_movie = pd.DataFrame(columns = movie_columns)
+    for key, value in movie_features_map.items():
+        new_row = pd.DataFrame([{
+            'Id': key,
+            'Title': value.title,
+            'Year': value.year,
+            'Limit': value.limit,
+            'Genre': value.genre,
+            'Avg rating': value.avg_rating,
+            "Total ratings": value.number_of_ratings
+        }])
+        df_movie = pd.concat([df_movie, new_row], ignore_index=True)
 
-for key, value in movie_features_map.items():
-    new_row = pd.DataFrame([{
-        'Id': key,
-        'Title': value.title,
-        'Year': value.year,
-        'Limit': value.limit,
-        'Genre': value.genre,
-        'Avg rating': value.avg_rating,
-        "Total ratings": value.number_of_ratings
-    }])
-    df_movie = pd.concat([df_movie, new_row], ignore_index=True)
+    df_movie.to_csv(os.path.join(project_root, r'data\record\movie.csv'), index=False)
 
-df_movie.to_csv(os.path.join(project_root, r'data\movie.csv'), index=False)
+def populate_user_csv():
+    movies, users = fetch_data_final()
+    user_features_map = compute_user_features(users=users, movies=movies)
 
-# Write user features data to csv file
-user_columns = ['Id', 'Age', 'Gender', 'Favorite genre']
-for genre in GENRES:
-    user_columns.append(f"{genre} favorite movies")
-for genre in GENRES:
-    user_columns.append(f"{genre} avg rating")
-for genre in GENRES:
-    user_columns.append(f"{genre} rating count")
-
-df_user = pd.DataFrame(columns=user_columns)
-
-for key, value in user_features_map.items():
-    row_data = {
-        'Id': key,
-        'Age': value.age,
-        'Gender': value.gender,
-        'Favorite genre': value.favorite_genre
-    }
+    # Write user features data to csv file
+    user_columns = ['Id', 'Age', 'Gender', 'Favorite genre']
     for genre in GENRES:
-        total_rating_count = getattr(value, f"{genre}RatingCount", 0)
-        total_rating_value = getattr(value, f"{genre}RatingTotal", 0)
-        total_favorite = getattr(value, f"{genre}FavoriteCount", 0)
-        row_data[f"{genre} favorite movies"] = total_favorite
-        row_data[f"{genre} rating count"] = total_rating_count
-        row_data[f"{genre} avg rating"] = total_rating_value / (total_rating_count if total_rating_count != 0 else 1)
-    new_row_df = pd.DataFrame([row_data])
-    df_user = pd.concat([df_user, new_row_df], ignore_index=True)
+        user_columns.append(f"{genre} favorite movies")
+    for genre in GENRES:
+        user_columns.append(f"{genre} avg rating")
+    for genre in GENRES:
+        user_columns.append(f"{genre} rating count")
 
-df_user.to_csv(os.path.join(project_root, r'data\user.csv'), index=False)
+    df_user = pd.DataFrame(columns=user_columns)
+
+    for key, value in user_features_map.items():
+        row_data = {
+            'Id': key,
+            'Age': value.age,
+            'Gender': value.gender,
+            'Favorite genre': value.favorite_genre
+        }
+        for genre in GENRES:
+            total_rating_count = getattr(value, f"{genre}RatingCount", 0)
+            total_rating_value = getattr(value, f"{genre}RatingTotal", 0)
+            total_favorite = getattr(value, f"{genre}FavoriteCount", 0)
+            row_data[f"{genre} favorite movies"] = total_favorite
+            row_data[f"{genre} rating count"] = total_rating_count
+            row_data[f"{genre} avg rating"] = total_rating_value / (total_rating_count if total_rating_count != 0 else 1)
+        new_row_df = pd.DataFrame([row_data])
+        df_user = pd.concat([df_user, new_row_df], ignore_index=True)
+
+    df_user.to_csv(os.path.join(project_root, r'data\record\user.csv'), index=False)
 
 
-# Write user-movie rating to csv
-user_movie_rating_columns = ['User Id', 'Movie Id', 'Rating']
-df_user_movie_rating = pd.DataFrame(columns=user_movie_rating_columns)
+def populate_user_movie_csv():
+    movies, _ = fetch_data_final()
+    user_movie_rating = compute_user_movie_rating(movies)
+    # Write user-movie rating to csv
+    user_movie_rating_columns = ['User Id', 'Movie Id', 'Rating']
+    df_user_movie_rating = pd.DataFrame(columns=user_movie_rating_columns)
 
-for key, value in user_movie_rating.items():
-    new_row_df = pd.DataFrame([{
-        'User Id': key[0],
-        'Movie Id': key[1],
-        'Rating': value
-    }])
-    df_user_movie_rating = pd.concat([df_user_movie_rating, new_row_df], ignore_index=True)
+    for key, value in user_movie_rating.items():
+        new_row_df = pd.DataFrame([{
+            'User Id': key[0],
+            'Movie Id': key[1],
+            'Rating': value
+        }])
+        df_user_movie_rating = pd.concat([df_user_movie_rating, new_row_df], ignore_index=True)
 
-df_user_movie_rating.to_csv(os.path.join(project_root, r'data\user_movie.csv'), index=False)
+    df_user_movie_rating.to_csv(os.path.join(project_root, r'data\record\user_movie.csv'), index=False)
+
+def populate_all():
+    populate_movie_csv()
+    populate_user_csv()
+    populate_user_movie_csv()
+    print("---------------Populate CSV Successfully----------------")

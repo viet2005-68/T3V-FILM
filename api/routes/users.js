@@ -3,10 +3,12 @@ const User = require("../models/User");
 const CryptoJS = require("crypto-js");
 const verify = require("../verifyToken");
 const favoriteRoute = require('./favorite');
+const axios = require('axios')
 
 router.use('/favorites', favoriteRoute);
 
 //UPDATE
+// When update user, repopulate recommender service data
 router.put("/:id", verify, async (req, res) => {
     if (req.user.id === req.params.id || req.user.isAdmin) {
         if (req.body.password) {
@@ -14,6 +16,12 @@ router.put("/:id", verify, async (req, res) => {
         }
         try {
             const updatedUser = await User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+            try {
+                await axios.post("http://localhost:8000/recommender/populate_record")
+            }
+            catch (err) {
+                console.log("Cannot Populate Recommender service data")
+            }
             res.status(200).json(updatedUser);
         }
         catch (err) {

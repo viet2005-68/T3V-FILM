@@ -14,7 +14,7 @@ def compute_movie_vectors():
         movie_title: Movie's Title
     '''
     movie_id_dict = {}
-    df_movie = pd.read_csv(os.path.join(project_root, r'data\movie.csv'))
+    df_movie = pd.read_csv(os.path.join(project_root, r'data\record\movie.csv'))
     for genre in GENRES:
         df_movie[f"Genre {genre}"] = df_movie['Genre'].apply(lambda x: 1 if x == genre else 0)
     df_numeric = df_movie.drop(columns=['Id', 'Title', 'Genre'])
@@ -29,7 +29,7 @@ def compute_user_vectors():
     Returns
     '''
     user_id_dict = {}
-    df_user = pd.read_csv(os.path.join(project_root, r"data\user.csv"))
+    df_user = pd.read_csv(os.path.join(project_root, r"data\record\user.csv"))
     df_user = df_user.fillna(0)
     for genre in GENRES:
         df_user[f"Favorite {genre}"] = df_user['Favorite genre'].apply(lambda x: 1 if x == genre else 0)
@@ -43,7 +43,7 @@ def compute_user_vectors():
 def compute_training_vectors():
     movie_vec, movie_id_dict, movie_title = compute_movie_vectors()
     user_vec, user_id_dict = compute_user_vectors()
-    df_user_movie = pd.read_csv(os.path.join(project_root, r"data\user_movie.csv"))
+    df_user_movie = pd.read_csv(os.path.join(project_root, r"data\record\user_movie.csv"))
     movie_train_vec = np.zeros(shape=(len(df_user_movie), movie_vec.shape[1]))
     user_train_vec = np.zeros(shape=(len(df_user_movie), user_vec.shape[1]))
     y_train = np.zeros(shape=(len(df_user_movie)))

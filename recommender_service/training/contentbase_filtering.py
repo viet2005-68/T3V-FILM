@@ -2,6 +2,10 @@ from preprocess import compute_training_vectors
 import tensorflow as tf
 import numpy as np
 from sklearn.model_selection import train_test_split
+from reading_data.convert_to_csv import populate_all
+import os
+
+populate_all()
 
 user_train_vec, movie_train_vec, y_train_vec = compute_training_vectors()
 num_outputs = 64
@@ -12,16 +16,23 @@ user_train, user_val, movie_train, movie_val, y_train, y_val = train_test_split(
     user_train_vec, movie_train_vec, y_train_vec, test_size=0.1, shuffle=True
 )
 
-def z_score_normalization(X):
+def compute_scaling_params(X, type):
     mui = np.mean(X, axis=0)
     std = np.std(X, axis=0)
-    X_scale = (X - mui) / (std + 1e-8)
-    return X_scale
+    np.save(f'data/params/{type}_mean.npy', mui)
+    np.save(f'data/params/{type}_std.npy', std)
+    return mui, std
 
-user_train_scale = z_score_normalization(user_train)
-movie_train_scale = z_score_normalization(movie_train)
-user_val_scale = z_score_normalization(user_val)
-movie_val_scale = z_score_normalization(movie_val)
+def z_score_normalization(X, mui, std):
+    return (X - mui) / (std + 1e-8)
+
+user_mui, user_std = compute_scaling_params(user_train, "user")
+movie_mui, movie_std = compute_scaling_params(movie_train, "movie")
+
+user_train_scale = z_score_normalization(user_train, user_mui, user_std)
+movie_train_scale = z_score_normalization(movie_train, movie_mui, movie_std)
+user_val_scale = z_score_normalization(user_val, user_mui, user_std)
+movie_val_scale = z_score_normalization(movie_val, movie_mui, movie_std)
 
 def dnn_model():
     user_model = tf.keras.models.Sequential([
@@ -59,8 +70,15 @@ def dnn_model():
 model = dnn_model()
 model.summary()
 
+lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
+    initial_learning_rate=0.001,
+    decay_steps=100,
+    decay_rate=0.96,
+    staircase=True
+)
+
 model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+    optimizer=tf.keras.optimizers.Adam(learning_rate=lr_schedule),
     loss=tf.keras.losses.MeanSquaredError()
 )
 
@@ -74,7 +92,12 @@ print("MSE: ", model.evaluate([user_train_scale, movie_train_scale], y_train))
 print()
 print("-------------------VALIDATION SETS--------------------------")
 print("-------------------PREDICTIONS------------------------------")
-print(model.predict([user_val_scale, movie_val_scale]).flatten())
+print(model.predict([user_val_scale, movie_val_scale], verbose=0).flatten())
 print("-------------------ACTUALS----------------------------------")
 print(y_val)
 print("MSE: ", model.evaluate([user_val_scale, movie_val_scale], y_val))
+
+# Save model
+save_dir = "data/model"
+os.makedirs(save_dir, exist_ok=True)
+model.save(os.path.join(save_dir, "contentbased_filtering.keras"))
