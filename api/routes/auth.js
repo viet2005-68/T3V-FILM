@@ -2,13 +2,15 @@ const router = require("express").Router();
 const User = require("../models/User");
 let CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
+const axios = require('axios')
 
 //REGISTER
+// When add user, repopulate recommender service data
 router.post("/register", async (req, res) => {
     {
-        const {email, password, username} = req.body;
+        const { email, password, username } = req.body;
         if (!email || !password || !username) {
-            return res.status(400).json({success: false, message: "All fields are required"});
+            return res.status(400).json({ success: false, message: "All fields are required" });
         }
     }
     const newUser = new User({
@@ -18,6 +20,12 @@ router.post("/register", async (req, res) => {
     });
     try {
         const user = await newUser.save();
+        try {
+            await axios.post("http://localhost:8000/recommender/populate_record")
+        }
+        catch (err) {
+            console.log("Cannot Populate Recommender service data")
+        }
         res.status(201).json(user);
     }
     catch (err) {

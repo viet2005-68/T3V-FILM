@@ -137,6 +137,10 @@ export default function NewProduct() {
 
                 {movie.img && <div className="moviePreview">
                     <h2>{movie.title}</h2>
+                    <div className="moviePreviewIte">
+                        <h3>Title image</h3>
+                        <img src={movie.imgTitle} alt="" />
+                    </div>
                     <div className="moviePreviewItem">
                         <h3>Poster image</h3>
                         <img src={movie.img} alt="" />
