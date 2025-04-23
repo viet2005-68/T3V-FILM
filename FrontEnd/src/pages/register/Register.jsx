@@ -3,6 +3,8 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Typical from "react-typical";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Register() {
     const navigate = useNavigate();
@@ -28,9 +30,16 @@ export default function Register() {
                 password: passwordRef.current.value,
                 username: usernameRef.current.value,
             });
-            navigate("/login");
+            navigate("/login", { state: { message: "Create Account Success!" } });
         } catch (err) {
-            console.log(err);
+            const errorCode = err.response.data.code
+            console.log(err)
+            if (errorCode === 11000) {
+                toast.error("Credientials Already Exists", { autoClose: 2000 });
+            }
+            else {
+                toast.error("Something went wrong", { autoClose: 2000 })
+            }
         }
     };
 
@@ -47,17 +56,19 @@ export default function Register() {
             <div className="container">
                 <div className="intro">
                     <h1>
-                        <Typical
-                            steps={["Unlimited movies, TV shows, and more.", 1000]}
+                        {/* <Typical
+                            steps={["Unlimited movies, TV shows, and more.", 1500]}
                             wrapper="span"
-                        />
+                        /> */}
+                        Unlimited movies, TV shows, and more.
                     </h1>
 
                     <h2>
                         <Typical
-                            steps={["Watch anywhere. Cancel anytime", 1000]}
+                            steps={["Watch anywhere. Cancel anytime", 1700]}
                             wrapper="span"
                         />
+                        {/* Watch anywhere. Cancel anytime */}
                     </h2>
 
                     <p>
@@ -66,10 +77,11 @@ export default function Register() {
                         <Typical
                             steps={[
                                 "Ready to watch? Enter your email to create or restart your membership",
-                                1500,
+                                1700,
                             ]}
                             wrapper="span"
                         />
+                        {/* Ready to watch? Enter your email to create or restart your membership */}
                     </p>
                 </div>
                 {!email ? (
@@ -89,6 +101,7 @@ export default function Register() {
                     </form>
                 )}
             </div>
+            <ToastContainer />
         </div>
     );
 }

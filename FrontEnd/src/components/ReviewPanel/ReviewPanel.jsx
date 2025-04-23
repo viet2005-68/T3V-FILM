@@ -42,7 +42,7 @@ export default function ReviewPanel({ onSubmit, onClose, movie }) {
                     <h3>{movie.title}</h3>
                     <div className="ratingInfo">
                         <Stars />
-                        <span> {movie.rating} / 5</span>
+                        <span> {movie.rating.toFixed(2)} / 5</span>
                         <span style={{ color: "gray" }}>({movie.reviews.length} reviews)</span>
                     </div>
                 </div>
