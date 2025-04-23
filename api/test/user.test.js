@@ -3,7 +3,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../../api/index');
-const User = require('../models/User');
+const User = require('../src/models/User');
 const CryptoJS = require("crypto-js");
 
 chai.use(chaiHttp);

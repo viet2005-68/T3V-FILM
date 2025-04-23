@@ -1,3 +1,8 @@
+vi.mock("@mui/icons-material", () => ({
+    Male: () => "MaleIcon",
+    Female: () => "FemaleIcon",
+}));
+
 import { useContext, useState } from "react"
 import { AuthContext } from "../../authContext/AuthContext"
 import { Male, Female } from "@mui/icons-material";
