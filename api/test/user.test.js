@@ -23,9 +23,10 @@ after(async () => {
 });
 
 describe('User API', () => {
+    let testEmail = "testuser@example.com";
     beforeEach(async () => {
          if (process.env.NODE_ENV === 'test') {
-            await User.deleteMany(); // Xóa dữ liệu chỉ khi ở môi trường test
+             await User.deleteMany({ email: testEmail });
         }
     });
 
@@ -94,6 +95,9 @@ describe('User API', () => {
                 expect(res.body).to.equal("Wrong password or username!");
                 done();
             });
+    });
+    after(async () => {
+        await User.deleteMany({ email: testEmail }); // Xóa tài khoản sau khi test xong
     });
 });
 
