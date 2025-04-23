@@ -1,11 +1,7 @@
-const Movie = require('../models/Movie')
-const router = require('express').Router()
-const verify = require("../verifyToken");
 const axios = require('axios')
+const Movie = require('../models/Movie.js')
 
-//ADD REVIEWS TO MOVIE
-// body: {comment: ..., rating: ..., user: ...}
-router.put("/:id", verify, async (req, res) => {
+const Create = async (req, res) => {
     try {
         const review = req.body;
         const movieId = req.params.id;
@@ -22,6 +18,10 @@ router.put("/:id", verify, async (req, res) => {
     catch (err) {
         res.status(500).json(err);
     }
-})
+}
 
-module.exports = router;
+const ReviewsController = {
+    Create
+}
+
+module.exports = ReviewsController

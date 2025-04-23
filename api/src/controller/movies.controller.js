@@ -1,12 +1,6 @@
-const router = require("express").Router();
-const Movie = require("../models/Movie");
-const verify = require("../verifyToken");
-const reviewRoute = require('./reviews');
+const Movie = require("../models/Movie.js");
 
-router.use('/reviews', reviewRoute)
-
-//CREATE
-router.post("/", verify, async (req, res) => {
+const Create = async (req, res) => {
     if (req.user.isAdmin) {
         const newMovie = new Movie(req.body);
         try {
@@ -20,10 +14,9 @@ router.post("/", verify, async (req, res) => {
     else {
         res.status(403).json("You are not allowed to create movie!");
     }
-})
+}
 
-//UPDATE
-router.put("/:id", verify, async (req, res) => {
+const Update = async (req, res) => {
     if (req.user.isAdmin) {
         try {
             const updatedMovie = await Movie.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
@@ -36,10 +29,9 @@ router.put("/:id", verify, async (req, res) => {
     else {
         res.status(403).json("You are not allowed to update movie!");
     }
-})
+}
 
-//DELETE
-router.delete("/:id", verify, async (req, res) => {
+const Delete = async (req, res) => {
     if (req.user.isAdmin) {
         try {
             await Movie.findByIdAndDelete(req.params.id);
@@ -52,10 +44,9 @@ router.delete("/:id", verify, async (req, res) => {
     else {
         res.status(403).json("You are not allowed to delete movie!");
     }
-})
+}
 
-//GET RANDOM (1 Movie)
-router.get("/random", verify, async (req, res) => {
+const GetRandom = async (req, res) => {
     const type = req.query.type;
     let movie;
     try {
@@ -81,10 +72,9 @@ router.get("/random", verify, async (req, res) => {
     catch (err) {
         res.status(500).json(err);
     }
-})
+}
 
-// GET TOP MOVIES
-router.get("/top", async (req, res) => {
+const GetTop = async (req, res) => {
     try {
         const topMovies = await Movie.aggregate([
             {
@@ -106,10 +96,9 @@ router.get("/top", async (req, res) => {
     catch (err) {
         res.status(500).json(err)
     }
-})
+}
 
-//GET MOVIES STATS
-router.get("/stats", verify, async (req, res) => {
+const GetStats = async (req, res) => {
     try {
         const data = await Movie.aggregate([
             {
@@ -124,10 +113,9 @@ router.get("/stats", verify, async (req, res) => {
     catch (err) {
         res.status(500).json(err);
     }
-})
+}
 
-//GET 1 movie by ID
-router.get("/:id", verify, async (req, res) => {
+const GetById = async (req, res) => {
     try {
         const movie = await Movie.findById(req.params.id).populate("reviews.user", "username profilePic");
         res.status(200).json(movie);
@@ -135,15 +123,9 @@ router.get("/:id", verify, async (req, res) => {
     catch (err) {
         res.status(500).json(err);
     }
-})
+}
 
-//GET ALL 
-// To get all movies: call /api/movies/
-// To get movies filtered by genre: call /api/movies?genre=YOUR_MOVIE_GENRE
-// To get movies filtered by title: call /api/movies?title=YOUR_MOVIE_NAME
-// To get movies filtered by year: call /api/movies?year=YOUR_MOVIE_YEAR
-// To get movies limited by a number: call /api/movies?limit=YOUR_LIMIT
-router.get("/", verify, async (req, res) => {
+const GetAll = async (req, res) => {
     const filter = {}
 
     if (req.query.genre) {
@@ -175,7 +157,17 @@ router.get("/", verify, async (req, res) => {
     } catch (err) {
         res.status(500).json(err)
     }
-})
+}
 
+const MoviesController = {
+    Create,
+    Update,
+    Delete,
+    GetRandom,
+    GetTop,
+    GetStats,
+    GetById,
+    GetAll
+}
 
-module.exports = router;
+module.exports = MoviesController
