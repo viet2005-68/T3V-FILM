@@ -8,7 +8,7 @@ Id,Title,Year,Limit,Genre,Avg rating,Total ratings
 67ff68dfedb5f27e065e4b3d,Atri: My Dear Moments,2023,16,romance,4.0,9
 67ff72b012c27e4d72835abc,Re:Zero − Starting Life in Another World Season 3,2024,18,fantasy,3.8333333333333335,6
 67fff2f7ba4a7f0f85006aaa,Angel Beats!,2010,16,comedy,4.222222222222222,9
-67fff754ba4a7f0f8500748e,"Love, Chunibyo & Other Delusions",2012,13,fantasy,4.2,5
+67fff754ba4a7f0f8500748e,"Love, Chunibyo & Other Delusions",2012,13,fantasy,4.166666666666667,6
 6803ef6d24511ad2320406b6,Violet Evergarden,2018,13,sci-fi,1.75,4
 6803f21c24511ad232041a8d,A Silent Voice,2016,16,romance,3.0,5
 6803fbb2074c8a7d7eb93c71,Tokyo Ghoul :re,2018,18,action,4.142857142857143,7
@@ -19,12 +19,12 @@ Id,Title,Year,Limit,Genre,Avg rating,Total ratings
 68052c046e01cc9265f4568c,Your Name,2016,13,romance,2.6666666666666665,12
 68052d5f6e01cc9265f461ad,Weathering With You,2019,13,romance,2.111111111111111,9
 68052ea66e01cc9265f4697d,Cyberpunk: Edgerunners,2022,18,sci-fi,1.3,10
-680530f66e01cc9265f48958,DAN DA DAN,2024,18,adventure,3.090909090909091,11
+680530f66e01cc9265f48958,DAN DA DAN,2024,18,adventure,2.9166666666666665,12
 680534467880425304c52ffa,Đao Kiếm Thần Vực Alicization,2018,13,adventure,2.5555555555555554,9
 6805439e7880425304c59cc2,Dark Gathering,2023,18,horror,1.1111111111111112,9
 680545317880425304c5a920,DEAD MOUNT DEATH PLAY,2023,18,horror,1.2222222222222223,9
 680546087880425304c5b7b7,Asobi Asobase,2018,11,comedy,3.0,9
-68059a5f1baf0532247ed3d3,My Hero Academia: Vigilantes,2025,16,adventure,2.7777777777777777,9
+68059a5f1baf0532247ed3d3,My Hero Academia: Vigilantes,2025,16,adventure,2.6,10
 68078d01c1f0e09c09d45304,Charlotte,2015,13,fantasy,2.0,3
 6807de50533638dc185814d3,"I May Be a Guild Receptionist, but I'll Solo Any Boss to Clock Out on Time",2025,16,action,0.0,0
 6807df54533638dc185821ed,Batman Ninja vs. Yakuza League,2025,16,action,5.0,1
@@ -32,10 +32,10 @@ Id,Title,Year,Limit,Genre,Avg rating,Total ratings
 6807e0ca533638dc18585180,The Rising of the Shield Hero (Season 2),2022,18,action,0.0,0
 6807e221533638dc18589d89,Dr. Stone,2019,13,adventure,0.0,0
 6807e409533638dc1858a7b1,The Boy and the Heron,2023,13,adventure,0.0,0
-6807e4f5533638dc1858af40,SPY x FAMILY,2022,13,adventure,0.0,0
-6807e56b533638dc1858b520,SPY x FAMILY (Season 2),2023,13,adventure,0.0,0
+6807e4f5533638dc1858af40,SPY x FAMILY,2022,13,adventure,1.0,1
+6807e56b533638dc1858b520,SPY x FAMILY (Season 2),2023,13,adventure,2.0,1
 6807e68f533638dc1858bae5,Doraemon: Nobita's Sky Utopia,2023,0,adventure,0.0,0
-6807e758533638dc1858d0b8,Patema Inverted,2013,13,adventure,0.0,0
+6807e758533638dc1858d0b8,Patema Inverted,2013,13,adventure,1.0,1
 6807e837533638dc1858de85,Erased,2016,16,adventure,0.0,0
 6807ea18533638dc1859175e,Bocchi The Rock!,2022,13,comedy,4.5,2
 6807eb56533638dc18594f41,Little Busters,2013,13,comedy,4.5,2
@@ -44,5 +44,5 @@ Id,Title,Year,Limit,Genre,Avg rating,Total ratings
 6807efc5533638dc1859f3ab,Konosuba,2016,18,fantasy,3.6666666666666665,3
 6807f0f4533638dc185a0ea8,Konosuba (Season 2),2017,18,fantasy,4.0,3
 6807f236533638dc185a1ddb,"Kobayashi-san Chi no Maid Dragon, The maid dragon of Kobayashi-san",2017,16,comedy,2.75,4
-6807f3ae533638dc185a2c9b,Re: Zero,2019,18,fantasy,4.0,3
-6807f511533638dc185a3480,KonoSuba: An Explosion on This Wonderful World!,2023,18,fantasy,5.0,2
+6807f3ae533638dc185a2c9b,Re:Zero − Starting Life in Another World ,2019,18,fantasy,4.25,4
+6807f511533638dc185a3480,KonoSuba: An Explosion on This Wonderful World!,2023,18,fantasy,5.0,3

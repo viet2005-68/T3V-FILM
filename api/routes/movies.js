@@ -171,7 +171,7 @@ router.get("/", verify, async (req, res) => {
         }
 
         const movies = await query
-        res.status(200).json(movies.reverse())
+        res.status(200).json(movies)
     } catch (err) {
         res.status(500).json(err)
     }

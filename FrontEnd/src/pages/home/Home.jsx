@@ -75,7 +75,7 @@ export default function Home({ type }) {
                     setAllMovie(res.data);
                 }
                 else {
-                    const res = await axios.get("/api/movies?limit=10", {
+                    const res = await axios.get("/api/movies?limit=20", {
                         headers: {
                             token:
                                 "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
@@ -187,7 +187,7 @@ export default function Home({ type }) {
             <Featured type={type} setGenre={setGenre} />
             <List
                 list={{
-                    title: "All Movies",
+                    title: "Latest",
                     content: allMovie.map((movie) => movie._id),
                 }}
             />
