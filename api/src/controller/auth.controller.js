@@ -1,12 +1,9 @@
-const router = require("express").Router();
-const User = require("../models/User");
+const User = require("../models/User")
 let CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 const axios = require('axios')
 
-//REGISTER
-// When add user, repopulate recommender service data
-router.post("/register", async (req, res) => {
+const Register = async (req, res) => {
     {
         const { email, password, username } = req.body;
         if (!email || !password || !username) {
@@ -31,10 +28,9 @@ router.post("/register", async (req, res) => {
     catch (err) {
         res.status(500).json(err);
     }
-})
+}
 
-//LOGIN
-router.post("/login", async (req, res) => {
+const Login = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
         if (!user) {
@@ -58,6 +54,11 @@ router.post("/login", async (req, res) => {
     catch (err) {
         res.status(500).json(err);
     }
-})
+}
 
-module.exports = router;
+const AuthController = {
+    Register,
+    Login
+}
+
+module.exports = AuthController

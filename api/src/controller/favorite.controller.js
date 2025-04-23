@@ -1,9 +1,6 @@
-const router = require('express').Router()
-const verify = require('../verifyToken')
-const User = require('../models/User')
+const User = require('../models/User.js')
 
-// Get user's favorite list
-router.get('/:id', async (req, res) => {
+const Get = async (req, res) => {
     try {
         const id = req.params.id
         const user = await User.findById(id).populate("favorites")
@@ -18,11 +15,9 @@ router.get('/:id', async (req, res) => {
     catch (err) {
         res.status(500).json(err)
     }
-})
+}
 
-//TOGGLE USER FAVORITE
-// body: {movieId: ...}
-router.put('/:id', verify, async (req, res) => {
+const Toggle = async (req, res) => {
     try {
         const id = req.params.id
         const movieId = req.body.movieId
@@ -48,6 +43,11 @@ router.put('/:id', verify, async (req, res) => {
     catch (err) {
         res.status(500).json(err)
     }
-})
+}
 
-module.exports = router;
+const FavoriteController = {
+    Get,
+    Toggle
+}
+
+module.exports = FavoriteController
