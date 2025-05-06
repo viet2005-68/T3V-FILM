@@ -104,6 +104,39 @@
       }
     }
   }
+
+  .thumbnail-carousel {
+    position: absolute;
+    bottom: 30px;
+    right: 50px;
+    display: flex;
+    gap: 10px;
+    overflow-x: visible;
+    padding: 10px 0;
+    max-width: 80%;
+    scroll-snap-type: x mandatory;
+    z-index: 990;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    img {
+      width: 80px;
+      height: 40px;
+      border-radius: 6px;
+      object-fit: cover;
+      cursor: pointer;
+      scroll-snap-align: start;
+      border: 2px solid transparent;
+      transition: 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
 }
 
 .film-info-container {
