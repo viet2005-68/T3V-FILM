@@ -42,8 +42,14 @@ const authed = {
       path: "/watch",
     },
     {
-      element: <Search />,
+      element: <DefaultLayout />,
       path: "/search",
+      children: [
+        {
+          path: "",
+          element: <Search />,
+        },
+      ],
     },
     {
       element: <DefaultLayout />,

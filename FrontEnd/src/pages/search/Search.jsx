@@ -1,4 +1,3 @@
-import Navbar from "../../components/navbar/Navbar.jsx";
 import Filter from "../../components/Filter/Filter.jsx";
 import SearchCard from "../../components/SearchCard/SearchCard.jsx";
 import { MdManageSearch } from "react-icons/md";
@@ -98,7 +97,6 @@ export default function Search() {
   };
   return (
     <div className="search">
-      <Navbar />
       <div className="search-content">
         <Header query={searchQuery} />
         <div className="tab-content">
@@ -112,11 +110,11 @@ export default function Search() {
             sx={{
               display: "grid",
               gridTemplateColumns: {
-                xs: "repeat(1, 1fr)", // điện thoại: 1 cột
-                sm: "repeat(2, 1fr)", // tablet nhỏ: 2 cột
-                md: "repeat(3, 1fr)", // tablet lớn: 3 cột
-                lg: "repeat(4, 1fr)", // desktop: 4 cột
-                xl: "repeat(5, 1fr)", // màn lớn: 5 cột
+                xs: "repeat(1, 1fr)",
+                sm: "repeat(2, 1fr)",
+                md: "repeat(3, 1fr)",
+                lg: "repeat(4, 1fr)",
+                xl: "repeat(5, 1fr)",
               },
               rowGap: 0,
             }}
@@ -143,13 +141,13 @@ export default function Search() {
             onRowsPerPageChange={handleChangeRowsPerPage}
             rowsPerPageOptions={[4, 8, 12, 16, 20]}
             sx={{
-              color: "white", // Màu chữ chính
+              color: "white",
               ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows":
                 {
-                  color: "white", // Label và số trang
+                  color: "white",
                 },
               ".MuiSvgIcon-root": {
-                color: "white", // Icon mũi tên
+                color: "white",
               },
             }}
           />

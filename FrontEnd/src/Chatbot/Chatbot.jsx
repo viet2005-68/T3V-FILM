@@ -11,23 +11,32 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
+import { Link } from "react-router-dom";
 import "./chatbot.scss";
 
 function Chatbot() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(() => {
+    const savedState = localStorage.getItem("chatbotState");
+    return savedState ? JSON.parse(savedState).isOpen : false;
+  });
   const [question, setQuestion] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      from: "bot",
-      text: "🤖 Hello! I'm T3VMovieBot – How can I help you?",
-      source: null,
-      suggestedQuestions: [
-        "Introduction to T3V",
-        "What are the best romance movies",
-        "How to register for T3V",
-      ],
-    },
-  ]);
+  const [messages, setMessages] = useState(() => {
+    const savedState = localStorage.getItem("chatbotState");
+    return savedState
+      ? JSON.parse(savedState).messages
+      : [
+          {
+            from: "bot",
+            text: "🤖 Hello! I'm T3VMovieBot – How can I help you?",
+            source: null,
+            suggestedQuestions: [
+              "Introduction to T3V",
+              "What are the best romance movies",
+              "How to register for T3V",
+            ],
+          },
+        ];
+  });
   const [loading, setLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState(null);
@@ -35,6 +44,17 @@ function Chatbot() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const chatContainerRef = useRef(null);
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(
+      "chatbotState",
+      JSON.stringify({
+        isOpen,
+        messages,
+      })
+    );
+  }, [isOpen, messages]);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
@@ -175,7 +195,7 @@ function Chatbot() {
   };
 
   const resetChat = () => {
-    setMessages([
+    const initialMessages = [
       {
         from: "bot",
         text: "🤖 Xin chào! Mình là T3VMovieBot – cuộc trò chuyện đã được làm mới.",
@@ -186,7 +206,40 @@ function Chatbot() {
           "Cách đăng ký tài khoản T3V",
         ],
       },
-    ]);
+    ];
+    setMessages(initialMessages);
+    localStorage.setItem(
+      "chatbotState",
+      JSON.stringify({
+        isOpen,
+        messages: initialMessages,
+      })
+    );
+  };
+
+  const customLinkRenderer = ({ href, children }) => {
+    // Check if the link is a movie link
+    if (href.includes("/movie/")) {
+      return (
+        <Link
+          to={href.replace("http://localhost:5173", "")}
+          className="chatbot-link"
+        >
+          {children}
+        </Link>
+      );
+    }
+    // For external links, open in new tab
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="chatbot-link"
+      >
+        {children}
+      </a>
+    );
   };
 
   return (
@@ -242,7 +295,13 @@ function Chatbot() {
                 ) : (
                   <div className="bot-message-container">
                     <div className="bot-message-content">
-                      <ReactMarkdown>{msg.text}</ReactMarkdown>
+                      <ReactMarkdown
+                        components={{
+                          a: customLinkRenderer,
+                        }}
+                      >
+                        {msg.text}
+                      </ReactMarkdown>
 
                       {msg.source && (
                         <div className="message-source">{msg.source}</div>
