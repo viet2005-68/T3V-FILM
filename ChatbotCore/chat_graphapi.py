@@ -11,6 +11,14 @@ from pathlib import Path
 import os
 import sys
 import time
+from graph import execute_with_langgraph
+from typing import Any, Dict, List
+from fastapi import Header
+import threading
+from threading import Lock
+
+# Add memory lock for thread safety
+memory_lock = Lock()
 
 # Import core dependencies
 from langchain_core.messages import AIMessage, HumanMessage, BaseMessage
@@ -334,8 +342,16 @@ def sync_memories(session_memory):
 
 # Endpoints
 @app.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+async def chat(request: ChatRequest, authorization: str = Header(None)):
     try:
+        # Get token from request
+        if not authorization or not authorization.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Thiếu hoặc sai định dạng Authorization header")
+        access_token = authorization.removeprefix("Bearer ").strip()
+        
+        # Debug log
+        print(f"🔑 Received token: {access_token[:10]}...")
+        
         # Get or create session memory
         session_id, session_memory = get_session_memory(request.session_id)
         
@@ -356,8 +372,13 @@ async def chat(request: ChatRequest):
         # Log the messages in memory for debugging
         print(f"Memory contains {len(global_memory.chat_memory.messages)} messages before processing")
         
-        # Process query using langgraph with synced memory
-        response = process_query_with_langgraph(request.question)
+        # Process query using langgraph with synced memory and token
+        print(f"🔑 Passing token to graph: {access_token[:10]}...")
+        response = execute_with_langgraph(
+            request.question, 
+            token=access_token,  # Pass the token here
+            memory=global_memory  # Pass the memory object
+        )
         
         # Update both memories with the new exchange
         session_memory.chat_memory.add_user_message(request.question)
@@ -482,8 +503,8 @@ async def health_check():
 # Run the server if this file is executed directly
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    print(f"🚀 Starting T3V Chatbot API on port {port}")
-    print(f"📊 Memory type: {type(global_memory).__name__}")
-    print(f"🤖 LLM type: {type(llm).__name__}")
+    print(f"Starting T3V Chatbot API on port {port}")
+    print(f"Memory type: {type(global_memory).__name__}")
+    print(f"LLM type: {type(llm).__name__}")
     
-    uvicorn.run("app:app", host="localhost", port=port, reload=True)
+    uvicorn.run("chat_graphapi:app", host="localhost", port=5000, reload=True)

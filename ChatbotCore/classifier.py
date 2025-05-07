@@ -1,10 +1,12 @@
 import json
 import re
+import traceback
 from state import AgentState
 from config import llm
 from response_tools import format_chat_history
 from response_tools import convert_message_to_dict
 from langchain_core.messages import AIMessage
+
 def classify_query_tool(question: str) -> str:
     """
     Enhanced classification tool with better context handling and robust fallback mechanisms.
@@ -12,173 +14,178 @@ def classify_query_tool(question: str) -> str:
     # Preprocess the question
     question = question.strip().lower()
     
-    # Quick check for obvious greetings with high confidence
-    greeting_phrases = ["chào", "xin chào", "hello", "hi", "hola", "bonjour", "hey", "good morning", "good afternoon"]
-    if any(question.startswith(greet) for greet in greeting_phrases) and len(question.split()) <= 5:
-        return json.dumps({
-            "category": "SERVICE",
-            "confidence": "high",
-            "reasoning": "Simple greeting detected, treating as a general service inquiry."
-        })
-    
-    # Strong indicators for SERVICE queries (high confidence)
-    service_indicators = [
-        "t3v là gì", "what is t3v", "dịch vụ t3v", "t3v service", "đăng ký t3v", "register t3v",
-        "tài khoản", "account", "đăng nhập", "login", "mật khẩu", "password", "subscription",
-        "thanh toán", "payment", "giá", "price", "cost", "gói dịch vụ", "bao nhiêu tiền",
-        "how to use t3v", "cách sử dụng t3v", "hướng dẫn", "guide", "cách đăng ký", "hỗ trợ", 
-        "support", "vấn đề", "issue", "lỗi", "error", "không xem được", "cannot watch",
-        "không đăng nhập được", "cannot login", "subscription", "đăng ký gói", "gia hạn",
-        "renew", "extend", "nâng cấp", "upgrade", "downgrade", "hạ cấp", "hủy gói", "cancel"
-    ]
-    
-    # Check for complete service phrases (highest priority)
-    complete_service_phrases = [
-        "đăng ký tài khoản t3v", "register t3v account", 
-        "cách thanh toán", "payment method",
-        "quên mật khẩu", "forgot password",
-        "gói dịch vụ t3v", "t3v subscription plans",
-        "hướng dẫn sử dụng t3v", "how to use t3v",
-        "vấn đề kỹ thuật", "technical issues",
-        "không đăng nhập được", "cannot login",
-        "không xem được phim", "cannot watch movies",
-        "hỗ trợ khách hàng", "customer support"
-    ]
-    
-    if any(phrase in question for phrase in complete_service_phrases):
-        return json.dumps({
-            "category": "SERVICE",
-            "confidence": "very high",
-            "reasoning": "Complete service-related phrase detected in query."
-        })
-    
-    if sum(1 for indicator in service_indicators if indicator in question) >= 2:
-        return json.dumps({
-            "category": "SERVICE",
-            "confidence": "high",
-            "reasoning": "Multiple service-related indicators detected in query."
-        })
-    elif any(indicator in question for indicator in service_indicators):
-        if "t3v" in question:
+    try:
+        # Quick check for obvious greetings with high confidence
+        greeting_phrases = ["chào", "xin chào", "hello", "hi", "hola", "bonjour", "hey", "good morning", "good afternoon"]
+        if any(question.startswith(greet) for greet in greeting_phrases) and len(question.split()) <= 5:
             return json.dumps({
                 "category": "SERVICE",
                 "confidence": "high",
-                "reasoning": "Service indicator with T3V mention detected in query."
+                "reasoning": "Simple greeting detected, treating as a general service inquiry."
             })
-        return json.dumps({
-            "category": "SERVICE", 
-            "confidence": "medium",
-            "reasoning": "Service-related indicator detected in query."
-        })
-    
-    # Strong indicators for MOVIE queries (high confidence)
-    movie_indicators = [
-        "phim", "movie", "film", "xem phim", "watch", "diễn viên", "actor", "actress", 
-        "đạo diễn", "director", "thể loại", "genre", "năm", "year", "recommend", "gợi ý",
-        "review", "rating", "đánh giá", "series", "tập", "episode", "season", "imdb",
-        "trailer", "preview", "teaser", "plot", "storyline", "cốt truyện", "nội dung",
-        "thông tin phim", "movie info", "cast", "dàn diễn viên", "nhân vật", "character",
-        "giải thưởng", "award", "oscar", "box office", "doanh thu", "phòng vé", "phim mới",
-        "new release", "phim hay", "best movies", "hành động", "action", "kinh dị", "horror",
-        "hài", "comedy", "tình cảm", "romance", "khoa học viễn tưởng", "sci-fi"
-    ]
-    
-    # Check for complete movie phrases (highest priority for MOVIE)
-    complete_movie_phrases = [
-        "phim hay nhất", "best movies", 
-        "đánh giá phim", "movie review",
-        "thông tin phim", "movie information",
-        "diễn viên trong phim", "actors in movie",
-        "đạo diễn phim", "movie director",
-        "nội dung phim", "movie plot",
-        "phim mới ra mắt", "new movie releases",
-        "gợi ý phim hay", "movie recommendations",
-        "phim thuộc thể loại", "movies in the genre"
-    ]
-    
-    if any(phrase in question for phrase in complete_movie_phrases):
-        return json.dumps({
-            "category": "MOVIE",
-            "confidence": "very high",
-            "reasoning": "Complete movie-related phrase detected in query."
-        })
-    
-    # Check if it's explicitly a movie query by counting multiple indicators
-    movie_indicator_count = sum(1 for indicator in movie_indicators if indicator in question)
-    
-    if movie_indicator_count >= 2:
-        # Further check if it's about watching ON T3V (service) or ABOUT movies (content)
-        if any(phrase in question for phrase in ["on t3v", "trên t3v", "t3v platform", "nền tảng t3v", "app t3v", "t3v app"]):
-            if any(action in question for action in ["how to", "cách", "làm sao", "làm thế nào"]):
+        
+        # Strong indicators for SERVICE queries (high confidence)
+        service_indicators = [
+            "t3v là gì", "what is t3v", "dịch vụ t3v", "t3v service", "đăng ký t3v", "register t3v",
+            "tài khoản", "account", "đăng nhập", "login", "mật khẩu", "password", "subscription",
+            "thanh toán", "payment", "giá", "price", "cost", "gói dịch vụ", "bao nhiêu tiền",
+            "how to use t3v", "cách sử dụng t3v", "hướng dẫn", "guide", "cách đăng ký", "hỗ trợ", 
+            "support", "vấn đề", "issue", "lỗi", "error", "không xem được", "cannot watch",
+            "không đăng nhập được", "cannot login", "subscription", "đăng ký gói", "gia hạn",
+            "renew", "extend", "nâng cấp", "upgrade", "downgrade", "hạ cấp", "hủy gói", "cancel"
+        ]
+        
+        # Check for complete service phrases (highest priority)
+        complete_service_phrases = [
+            "đăng ký tài khoản t3v", "register t3v account", 
+            "cách thanh toán", "payment method",
+            "quên mật khẩu", "forgot password",
+            "gói dịch vụ t3v", "t3v subscription plans",
+            "hướng dẫn sử dụng t3v", "how to use t3v",
+            "vấn đề kỹ thuật", "technical issues",
+            "không đăng nhập được", "cannot login",
+            "không xem được phim", "cannot watch movies",
+            "hỗ trợ khách hàng", "customer support"
+        ]
+        
+        if any(phrase in question for phrase in complete_service_phrases):
+            return json.dumps({
+                "category": "SERVICE",
+                "confidence": "very high",
+                "reasoning": "Complete service-related phrase detected in query."
+            })
+        
+        if sum(1 for indicator in service_indicators if indicator in question) >= 2:
+            return json.dumps({
+                "category": "SERVICE",
+                "confidence": "high",
+                "reasoning": "Multiple service-related indicators detected in query."
+            })
+        elif any(indicator in question for indicator in service_indicators):
+            if "t3v" in question:
                 return json.dumps({
                     "category": "SERVICE",
                     "confidence": "high",
-                    "reasoning": "Query about how to watch movies ON the T3V platform (service-related)."
+                    "reasoning": "Service indicator with T3V mention detected in query."
                 })
+            return json.dumps({
+                "category": "SERVICE", 
+                "confidence": "medium",
+                "reasoning": "Service-related indicator detected in query."
+            })
         
-        return json.dumps({
-            "category": "MOVIE",
-            "confidence": "high",
-            "reasoning": "Multiple movie-related indicators detected in query."
-        })
-    elif movie_indicator_count == 1:
-        # Single movie indicator - medium confidence
-        return json.dumps({
-            "category": "MOVIE",
-            "confidence": "medium",
-            "reasoning": "Single movie-related indicator detected in query."
-        })
-    
-    # Enhanced classification prompt with chain-of-thought
-    prompt = """
-    Bạn là chuyên gia phân loại ý định người dùng cho nền tảng xem phim T3V.
-    
-    INSTRUCTIONS:
-    Analyze the user's question step by step to determine the correct category:
-    1. First, identify the main topic or focus of the question
-    2. Consider what information or action the user is seeking
-    3. Match this to the most appropriate category
-    4. Provide your detailed reasoning process
-    5. Return your final classification
-    
-    CÁC DANH MỤC:
-    - "MOVIE" — Câu hỏi về phim cụ thể, diễn viên, đề xuất, thể loại hoặc nội dung liên quan đến phim
-    - "SERVICE" — Câu hỏi về chính nền tảng T3V, tài khoản, hỗ trợ kỹ thuật, giá cả, tính năng hoặc cách sử dụng T3V
-    - "OTHER" — Câu hỏi không liên quan đến phim hoặc dịch vụ T3V
-    
-    PHÂN BIỆT QUAN TRỌNG:
-    - Câu hỏi về "xem phim trên T3V" là SERVICE nếu chúng hỏi CÁCH SỬ DỤNG nền tảng
-    - Câu hỏi về NỘI DUNG phim, đề xuất hoặc thông tin là MOVIE
-    - Câu hỏi về tính năng T3V, tài khoản, giá cả là SERVICE
-    - Các câu hỏi chung không liên quan đến phim hoặc T3V là OTHER
-    
-    Câu hỏi: "{question}"
-    
-    Lý luận từng bước:
-    """
-    
-    try:
+        # Strong indicators for MOVIE queries (high confidence)
+        movie_indicators = [
+            "phim", "movie", "film", "xem phim", "watch", "diễn viên", "actor", "actress", 
+            "đạo diễn", "director", "thể loại", "genre", "năm", "year", "recommend", "gợi ý",
+            "review", "rating", "đánh giá", "series", "tập", "episode", "season", "imdb",
+            "trailer", "preview", "teaser", "plot", "storyline", "cốt truyện", "nội dung",
+            "thông tin phim", "movie info", "cast", "dàn diễn viên", "nhân vật", "character",
+            "giải thưởng", "award", "oscar", "box office", "doanh thu", "phòng vé", "phim mới",
+            "new release", "phim hay", "best movies", "hành động", "action", "kinh dị", "horror",
+            "hài", "comedy", "tình cảm", "romance", "khoa học viễn tưởng", "sci-fi"
+        ]
+        
+        # Check for complete movie phrases (highest priority for MOVIE)
+        complete_movie_phrases = [
+            "phim hay nhất", "best movies", 
+            "đánh giá phim", "movie review",
+            "thông tin phim", "movie information",
+            "diễn viên trong phim", "actors in movie",
+            "đạo diễn phim", "movie director",
+            "nội dung phim", "movie plot",
+            "phim mới ra mắt", "new movie releases",
+            "gợi ý phim hay", "movie recommendations",
+            "phim thuộc thể loại", "movies in the genre"
+        ]
+        
+        if any(phrase in question for phrase in complete_movie_phrases):
+            return json.dumps({
+                "category": "MOVIE",
+                "confidence": "very high",
+                "reasoning": "Complete movie-related phrase detected in query."
+            })
+        
+        # Check if it's explicitly a movie query by counting multiple indicators
+        movie_indicator_count = sum(1 for indicator in movie_indicators if indicator in question)
+        
+        if movie_indicator_count >= 2:
+            # Further check if it's about watching ON T3V (service) or ABOUT movies (content)
+            if any(phrase in question for phrase in ["on t3v", "trên t3v", "t3v platform", "nền tảng t3v", "app t3v", "t3v app"]):
+                if any(action in question for action in ["how to", "cách", "làm sao", "làm thế nào"]):
+                    return json.dumps({
+                        "category": "SERVICE",
+                        "confidence": "high",
+                        "reasoning": "Query about how to watch movies ON the T3V platform (service-related)."
+                    })
+            
+            return json.dumps({
+                "category": "MOVIE",
+                "confidence": "high",
+                "reasoning": "Multiple movie-related indicators detected in query."
+            })
+        elif movie_indicator_count == 1:
+            # Single movie indicator - medium confidence
+            return json.dumps({
+                "category": "MOVIE",
+                "confidence": "medium",
+                "reasoning": "Single movie-related indicator detected in query."
+            })
+        
+        # Enhanced classification prompt with chain-of-thought
+        prompt = """
+        Bạn là chuyên gia phân loại ý định người dùng cho nền tảng xem phim T3V.
+        
+        INSTRUCTIONS:
+        Analyze the user's question step by step to determine the correct category:
+        1. First, identify the main topic or focus of the question
+        2. Consider what information or action the user is seeking
+        3. Match this to the most appropriate category
+        4. Provide your detailed reasoning process
+        5. Return your final classification
+        
+        CÁC DANH MỤC:
+        - "MOVIE" — Câu hỏi về phim cụ thể, diễn viên, đề xuất, thể loại hoặc nội dung liên quan đến phim
+        - "SERVICE" — Câu hỏi về chính nền tảng T3V, tài khoản, hỗ trợ kỹ thuật, giá cả, tính năng hoặc cách sử dụng T3V
+        - "OTHER" — Câu hỏi không liên quan đến phim hoặc dịch vụ T3V
+        
+        PHÂN BIỆT QUAN TRỌNG:
+        - Câu hỏi về "xem phim trên T3V" là SERVICE nếu chúng hỏi CÁCH SỬ DỤNG nền tảng
+        - Câu hỏi về NỘI DUNG phim, đề xuất hoặc thông tin là MOVIE
+        - Câu hỏi về tính năng T3V, tài khoản, giá cả là SERVICE
+        - Các câu hỏi chung không liên quan đến phim hoặc T3V là OTHER
+        
+        Câu hỏi: "{question}"
+        
+        Lý luận từng bước:
+        """
+        
         # Call LLM for classification with reasoning
         response = llm.invoke(prompt.format(question=question))
-        content = response if isinstance(response, str) else response.content
+        content = get_llm_content(response)
         
         # Extract category based on comprehensive analysis
         category = None
         confidence = "medium"
         
-        # Look for clear category indicators in the response
-        if "MOVIE" in content.upper() and ("Category: MOVIE" in content or "classification: MOVIE" in content or "MOVIE" in content.split()[-10:]):
-            category = "MOVIE"
+        # Extract category using regex patterns for more accurate detection
+        category_match = re.search(r"Category:[\s]*(MOVIE|SERVICE|OTHER)", content, re.IGNORECASE)
+        if not category_match:
+            category_match = re.search(r"classification:[\s]*(MOVIE|SERVICE|OTHER)", content, re.IGNORECASE)
+        
+        if category_match:
+            category = category_match.group(1).upper()
             if "high confidence" in content.lower() or "strong evidence" in content.lower():
                 confidence = "high"
-        elif "SERVICE" in content.upper() and ("Category: SERVICE" in content or "classification: SERVICE" in content or "SERVICE" in content.split()[-10:]):
-            category = "SERVICE"
-            if "high confidence" in content.lower() or "strong evidence" in content.lower():
-                confidence = "high"
-        elif "OTHER" in content.upper() and ("Category: OTHER" in content or "classification: OTHER" in content or "OTHER" in content.split()[-10:]):
-            category = "OTHER"
-            if "high confidence" in content.lower() or "strong evidence" in content.lower():
-                confidence = "high"
+        else:
+            # Fallback to analyzing last few words
+            last_words = ' '.join(content.split()[-10:]).upper()
+            if "MOVIE" in last_words.split():
+                category = "MOVIE"
+            elif "SERVICE" in last_words.split():
+                category = "SERVICE"
+            elif "OTHER" in last_words.split():
+                category = "OTHER"
         
         # If still no category found, use improved keyword detection as fallback
         if not category:
@@ -246,11 +253,10 @@ def classify_query_tool(question: str) -> str:
         })
         
     except Exception as e:
-        print(f"Error in classification: {e}")
-        # More helpful error message with traceback
-        import traceback
-        trace = traceback.format_exc()
-        print(f"Detailed error: {trace}")
+        # Log the error with minimal detail
+        print(f"Error in classification: {str(e)}")
+        # Don't print full traceback in production, but log the exception type
+        error_type = type(e).__name__
         
         # Fallback to simple keyword matching
         movie_count = sum(1 for word in ["phim", "movie", "film", "actor", "actress", "director", "diễn viên", "đạo diễn"] if word in question)
@@ -260,29 +266,42 @@ def classify_query_tool(question: str) -> str:
             return json.dumps({
                 "category": "MOVIE", 
                 "confidence": "low",
-                "reasoning": f"Fallback classification based on keyword detection. Error: {str(e)}"
+                "reasoning": f"Fallback classification based on keyword detection. Error type: {error_type}"
             })
         elif service_count > 0 or "t3v" in question:
             return json.dumps({
                 "category": "SERVICE", 
                 "confidence": "low",
-                "reasoning": f"Fallback classification based on keyword detection. Error: {str(e)}"
+                "reasoning": f"Fallback classification based on keyword detection. Error type: {error_type}"
             })
         else:
             return json.dumps({
                 "category": "OTHER", 
                 "confidence": "low",
-                "reasoning": f"Classification error occurred. Defaulting to OTHER as fallback. Error: {str(e)}"
+                "reasoning": f"Classification error occurred. Defaulting to OTHER as fallback. Error type: {error_type}"
             })
+
+def get_llm_content(response):
+    """Helper function to safely extract content from LLM response."""
+    if isinstance(response, str):
+        return response
+    # Try to get content attribute
+    if hasattr(response, 'content'):
+        return response.content
+    # Try to convert to string if all else fails
+    return str(response)
 
 def context_aware_router(state: AgentState) -> str:
     """
     Enhanced routing logic with better context awareness and follow-up detection.
     """
-    classification = state["classification"]["category"]
-    confidence = state["classification"].get("confidence", "medium")
-    query = state["query"]
-    chat_history = state["chat_history"]
+    classification = state.get("classification", {}).get("category", "OTHER")
+    confidence = state.get("classification", {}).get("confidence", "medium")
+    query = state.get("query", "")
+    chat_history = state.get("chat_history", [])
+    
+    # Log our inputs for debugging
+    print(f"Routing for category: {classification}, confidence: {confidence}")
     
     # Fast path for very high/high confidence classifications
     if confidence in ["very high", "high"]:
@@ -294,15 +313,23 @@ def context_aware_router(state: AgentState) -> str:
     
     # For medium/low confidence, analyze conversation flow
     if chat_history and len(chat_history) >= 2:
-        # Properly format history for analysis
-        history_context = format_chat_history(chat_history) if chat_history else ""
-        
         # Extract the most recent AI response to check its category
         previous_categories = []
         for i in range(len(chat_history) - 1, 0, -1):
             msg = chat_history[i]
-            if isinstance(msg, dict) and msg.get('role') == 'ai':
+            # Handle both dictionary and object formats
+            if isinstance(msg, dict):
                 content = msg.get('content', '').lower()
+                is_ai = msg.get('role') == 'ai'
+            else:
+                try:
+                    # Try to access as object attributes
+                    content = getattr(msg, 'content', '').lower()
+                    is_ai = getattr(msg, 'type', '') == 'ai'
+                except AttributeError:
+                    continue
+                    
+            if is_ai:
                 if "source: vectordb" in content:
                     previous_categories.append("SERVICE")
                 elif "source: tmdb" in content:
@@ -359,25 +386,26 @@ def context_aware_router(state: AgentState) -> str:
             
             # Call LLM for context analysis
             response = llm.invoke(context_analysis_prompt)
-            result = response if isinstance(response, str) else response.content
-            result = result.strip().upper()
+            result = get_llm_content(response).strip().upper()
             
-            # Extract the classification
-            if "SERVICE" in result:
+            # Use more precise matching to extract classification
+            if re.search(r'\bSERVICE\b', result):
                 print("Context analysis rerouted to SERVICE")
                 return "service_node"
-            elif "MOVIE" in result:
+            elif re.search(r'\bMOVIE\b', result):
                 print("Context analysis rerouted to MOVIE")
                 return "movie_node"
-            elif "OTHER" in result:
+            elif re.search(r'\bOTHER\b', result):
                 print("Context analysis confirmed OTHER category")
                 return "web_node"
+            else:
+                print(f"Context analysis returned unclear result: '{result}', falling back to original classification")
         except Exception as e:
-            print(f"Context router analysis error: {e}")
-            # If analysis fails, use original classification
+            print(f"Context router analysis error: {type(e).__name__}")
+            # Don't log the full exception details
     
     # Standard routing based on classification
-    print(f"Standard routing based on classification: {classification}")
+    print(f"Using standard routing based on classification: {classification}")
     if classification == "SERVICE":
         return "service_node"
     elif classification == "MOVIE":
@@ -387,132 +415,30 @@ def context_aware_router(state: AgentState) -> str:
 
 
 def classify_node(state: AgentState) -> AgentState:
-    """
-    Enhanced classification node with better context handling and query analysis.
-    """
-    query = state["query"]
-    raw_history = state["chat_history"]
-    
-    # Better history processing with proper error handling
+    """Classify the query and update state with classification results."""
     try:
-        chat_history = [convert_message_to_dict(msg) for msg in raw_history] if raw_history else []
-    except Exception as e:
-        print(f"Error processing chat history: {e}")
-        chat_history = []  # Fallback to empty history on error
-    
-    # Enhanced context extraction from history
-    context_from_history = ""
-    recent_query_context = ""
-    if chat_history:
-        # Analyze recent messages for better context
-        recent_messages = chat_history[-6:] if len(chat_history) >= 6 else chat_history
+        query = state["query"]
+        token = state.get("token")  # Get token from state
         
-        # Format full context for reference
-        context_from_history = "Previous conversation:\n"
-        for msg in recent_messages:
-            role = msg.get('role', 'unknown')
-            content = msg.get('content', '')
-            prefix = "User: " if role == 'human' else "Assistant: "
-            context_from_history += f"{prefix}{content.strip()}\n"
+        print(f"🔑 Token in classify_node: {token[:10] if token else 'None'}...")
         
-        # Extract the most recent user query and assistant response specifically
-        for i in range(len(chat_history) - 1, 0, -2):
-            if i >= 1 and i < len(chat_history):
-                user_msg = chat_history[i-1] if chat_history[i-1].get('role') == 'human' else None
-                ai_msg = chat_history[i] if chat_history[i].get('role') == 'ai' else None
-                
-                if user_msg and ai_msg:
-                    recent_query_context = f"Last query: {user_msg.get('content')}\nLast response: {ai_msg.get('content')[:100]}..."
-                    break
-    
-    # Check for follow-up patterns in the query
-    followup_indicators = [
-        "what about", "how about", "tell me more", "additionally", "and", "also", "another", "more",
-        "còn", "vậy còn", "cho tôi biết thêm", "thêm", "tiếp", "và", "cụ thể hơn", "nữa", 
-        "có gì khác", "những cái khác", "tiếp theo"
-    ]
-    
-    is_likely_followup = (
-        len(query.split()) <= 4 or 
-        any(indicator in query.lower() for indicator in followup_indicators) or
-        not any(char in "?.,!;" for char in query) or  # No punctuation often indicates follow-up
-        query.strip().startswith("còn") or
-        query.strip().startswith("và") or
-        query.strip().startswith("and")
-    )
-    
-    try:
-        # If this appears to be a follow-up and we have history, use context-aware classification
-        if is_likely_followup and chat_history and len(chat_history) >= 2:
-            # Create contextual query for classification
-            contextual_classification_prompt = f"""
-            CÂU HỎI GẦN ĐÂY:
-            {recent_query_context}
-            
-            CÂU HỎI HIỆN TẠI:
-            {query}
-            
-            Dựa vào ngữ cảnh trên, câu hỏi hiện tại có phải là câu hỏi tiếp theo về cùng chủ đề không?
-            Nếu đúng là câu hỏi tiếp theo, chủ đề chính là gì?
-            1. Về dịch vụ T3V (đăng ký, tài khoản, thanh toán, v.v) - trả lời "SERVICE"
-            2. Về phim (phim cụ thể, diễn viên, đề xuất, v.v) - trả lời "MOVIE"
-            3. Về chủ đề khác - trả lời "OTHER"
-            
-            Chỉ trả lời một từ: "SERVICE", "MOVIE", hoặc "OTHER"
-            """
-            
-            # Check if it's a follow-up
-            response = llm.invoke(contextual_classification_prompt)
-            content = response if isinstance(response, str) else response.content
-            
-            if "SERVICE" in content.upper():
-                classification_result = json.dumps({
-                    "category": "SERVICE",
-                    "confidence": "medium",
-                    "reasoning": "Follow-up question continuing about T3V services from previous conversation."
-                })
-            elif "MOVIE" in content.upper():
-                classification_result = json.dumps({
-                    "category": "MOVIE",
-                    "confidence": "medium",
-                    "reasoning": "Follow-up question continuing about movies from previous conversation."
-                })
-            else:
-                # Standard classification for new topics
-                classification_result = classify_query_tool(query)
-        else:
-            # Standard classification for new topics
-            classification_result = classify_query_tool(query)
+        # Get classification
+        classification_result = classify_query_tool(query)
+        classification = json.loads(classification_result)
         
-        # Parse and store classification
-        classification_data = json.loads(classification_result)
-        state["classification"] = classification_data
+        # Update state directly instead of creating a new one
+        state["classification"] = classification
         
-        # Add detailed classification info to messages for debugging (can be removed in production)
-        state["messages"].append(AIMessage(
-            content=f"Query classified as: {classification_data['category']} (Confidence: {classification_data['confidence']})"
-        ))
+        print(f"Classification complete: {classification['category']} with {classification['confidence']} confidence")
+        return state
         
     except Exception as e:
-        # Improved error handling with useful diagnostics
-        print(f"Classification error: {e}")
-        print(f"Query that caused error: '{query}'")
+        print(f"Error in classify_node: {type(e).__name__}")
         
-        # Extract fallback category using most basic keyword detection
-        fallback_category = "OTHER"
-        if any(word in query.lower() for word in ["t3v", "account", "tài khoản", "đăng ký", "thanh toán", "subscription"]):
-            fallback_category = "SERVICE"
-        elif any(word in query.lower() for word in ["phim", "movie", "film", "diễn viên", "actor", "thể loại", "genre"]):
-            fallback_category = "MOVIE"
-        
-        # Default with diagnostics info
+        # Update state directly with error classification
         state["classification"] = {
-            "category": fallback_category,
+            "category": "SERVICE",  # Default to SERVICE as the safest option
             "confidence": "low",
-            "reasoning": f"Classification failed. Using {fallback_category} as fallback. Error: {str(e)}"
+            "reasoning": "Error occurred during classification"
         }
-        state["messages"].append(AIMessage(
-            content=f"Classification system encountered an issue. Proceeding with {fallback_category} handling."
-        ))
-
-    return state
+        return state
