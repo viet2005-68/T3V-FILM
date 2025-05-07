@@ -28,7 +28,6 @@ def populate_movie_csv():
             "Total ratings": value.number_of_ratings
         }])
         df_movie = pd.concat([df_movie, new_row], ignore_index=True)
-
     df_movie.to_csv(os.path.join(project_root, r'data\record\movie.csv'), index=False)
 
 def populate_user_csv():

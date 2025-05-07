@@ -24,10 +24,13 @@ def compute_scaling_params(X, type):
     return mui, std
 
 def z_score_normalization(X, mui, std):
-    return (X - mui) / (std + 1e-8)
+    return (X - mui) / (std)
 
 user_mui, user_std = compute_scaling_params(user_train, "user")
 movie_mui, movie_std = compute_scaling_params(movie_train, "movie")
+# Avoid division by small number
+movie_std[movie_std <= 0.05] = 1
+user_std[user_std <= 0.05] = 1
 
 user_train_scale = z_score_normalization(user_train, user_mui, user_std)
 movie_train_scale = z_score_normalization(movie_train, movie_mui, movie_std)

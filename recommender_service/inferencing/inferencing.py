@@ -18,9 +18,10 @@ def preprocess():
     user_std = np.load('data/params/user_std.npy')
     movie_mean = np.load('data/params/movie_mean.npy')
     movie_std = np.load('data/params/movie_std.npy')
+    movie_std[movie_std <= 0.05] = 1
 
     user_vec_scale = (user_vec - user_mean) / (user_std + 1e-8)
-    movie_vec_scale = (movie_vec - movie_mean) / (movie_std + 1e-8)
+    movie_vec_scale = (movie_vec - movie_mean) / (movie_std)
     return user_vec_scale, movie_vec_scale, user_dict, movie_dict
 
 def get_alreay_rate(user_id):
@@ -43,7 +44,9 @@ def inference(user_id, n=10):
         if movie_dict_rev[idx] in already_rate:
             continue
         prediction_rating = model.predict([user_vec[user_dict[user_id]].reshape(-1, user_vec[user_dict[user_id]].shape[0]), movie.reshape(-1, movie.shape[0])], verbose=0)
-        user_movie_dict[movie_dict_rev[idx]] = prediction_rating[0][0]
+        # Take only rating that is greater or equal to 3
+        if prediction_rating[0][0] >= 3:
+            user_movie_dict[movie_dict_rev[idx]] = prediction_rating[0][0]
     sorted_dict = OrderedDict(sorted(user_movie_dict.items(), key=lambda item: item[1], reverse=True))
     top_n = OrderedDict(islice(sorted_dict.items(), n))
     return top_n

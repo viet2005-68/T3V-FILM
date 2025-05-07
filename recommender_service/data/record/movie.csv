@@ -2,17 +2,17 @@ Id,Title,Year,Limit,Genre,Avg rating,Total ratings
 67f6788d43e80aa15b5ea57e,Blue Box,2023,16,romance,3.2857142857142856,7
 67f68129569a78139d11a995,Black Clover: Sword of the Wizard King,2023,15,action,3.4166666666666665,12
 67f682bf569a78139d11a9ff,Jujutsu Kaisen 2,2023,16,fantasy,2.8181818181818183,11
-67f683c3569a78139d11aa53,Invincible,2021,18,action,3.5384615384615383,13
-67fa79fb33a4d45485852a61,Mobile Suit Gundam: The Witch from Mercury,2022,15,action,3.5384615384615383,13
+67f683c3569a78139d11aa53,Invincible,2021,18,action,3.2857142857142856,14
+67fa79fb33a4d45485852a61,Mobile Suit Gundam: The Witch from Mercury,2022,15,action,3.642857142857143,14
 67ff65bb5310f4a44095d22a,K-on! SS2,2011,13,comedy,3.642857142857143,14
-67ff68dfedb5f27e065e4b3d,Atri: My Dear Moments,2023,16,romance,4.3076923076923075,13
+67ff68dfedb5f27e065e4b3d,Atri: My Dear Moments,2023,16,romance,4.133333333333334,15
 67ff72b012c27e4d72835abc,Re:Zero − Starting Life in Another World Season 3,2024,18,fantasy,3.5,8
 67fff2f7ba4a7f0f85006aaa,Angel Beats!,2010,16,comedy,4.0,12
-67fff754ba4a7f0f8500748e,"Love, Chunibyo & Other Delusions",2012,13,fantasy,4.125,8
+67fff754ba4a7f0f8500748e,"Love, Chunibyo & Other Delusions",2012,13,fantasy,4.111111111111111,9
 6803ef6d24511ad2320406b6,Violet Evergarden,2018,13,sci-fi,1.75,4
 6803f21c24511ad232041a8d,A Silent Voice,2016,16,romance,3.4285714285714284,7
-6803fbb2074c8a7d7eb93c71,Tokyo Ghoul :re,2018,18,action,3.909090909090909,11
-6803fd00074c8a7d7eb946a0,Frieren: Beyond Journey's End,2023,13,fantasy,3.888888888888889,9
+6803fbb2074c8a7d7eb93c71,Tokyo Ghoul :re,2018,18,action,4.0,12
+6803fd00074c8a7d7eb946a0,Frieren: Beyond Journey's End,2023,13,fantasy,3.7,10
 68040628074c8a7d7eb95a88,Eighty Six,2021,13,action,3.5,8
 68052a656e01cc9265f4479c,Attack On Titan: The Last Attack,2024,18,action,3.5,10
 68052b316e01cc9265f44935,Gosick,2011,13,romance,3.8461538461538463,13
@@ -27,8 +27,8 @@ Id,Title,Year,Limit,Genre,Avg rating,Total ratings
 68059a5f1baf0532247ed3d3,My Hero Academia: Vigilantes,2025,16,adventure,2.8461538461538463,13
 68078d01c1f0e09c09d45304,Charlotte,2015,13,fantasy,2.75,4
 6807de50533638dc185814d3,"I May Be a Guild Receptionist, but I'll Solo Any Boss to Clock Out on Time",2025,16,action,2.6666666666666665,3
-6807df54533638dc185821ed,Batman Ninja vs. Yakuza League,2025,16,action,4.0,5
-6807e044533638dc18584ce8,The Rising of the Shield Hero (Season 1),2019,18,action,4.2,5
+6807df54533638dc185821ed,Batman Ninja vs. Yakuza League,2025,16,action,4.166666666666667,6
+6807e044533638dc18584ce8,The Rising of the Shield Hero (Season 1),2019,18,action,4.428571428571429,7
 6807e0ca533638dc18585180,The Rising of the Shield Hero (Season 2),2022,18,action,3.8,5
 6807e221533638dc18589d89,Dr. Stone,2019,13,adventure,3.0,2
 6807e409533638dc1858a7b1,The Boy and the Heron,2023,13,adventure,3.5,2
@@ -45,5 +45,57 @@ Id,Title,Year,Limit,Genre,Avg rating,Total ratings
 6807f0f4533638dc185a0ea8,Konosuba (Season 2),2017,18,fantasy,3.6,5
 6807f236533638dc185a1ddb,"Kobayashi-san Chi no Maid Dragon, The maid dragon of Kobayashi-san",2017,16,comedy,2.5714285714285716,7
 6807f3ae533638dc185a2c9b,Re:Zero − Starting Life in Another World ,2019,18,fantasy,3.7,10
-6807f511533638dc185a3480,KonoSuba: An Explosion on This Wonderful World!,2023,18,fantasy,4.6,5
+6807f511533638dc185a3480,KonoSuba: An Explosion on This Wonderful World!,2023,18,fantasy,4.666666666666667,6
 68090f33e6bab0fa7fd12475,Bí Ẩn Không Gian,2025,18,sci-fi,0.0,0
+680a5cae9132aad2a40b7d55,Khi Cuộc Đời Cho Bạn Quả Quýt,2025,12,romance,0.0,0
+680a5d709132aad2a40b86f9,Những bác sĩ tài hoa,2020,12,comedy,0.0,0
+680a62049132aad2a40b89ed,Bậc Thầy Đàm Phán,2025,16,drama,3.0,2
+680a62559132aad2a40b8ce1,Kẻ Thù Dấu Yêu,2025,15,romance,0.0,0
+680a62c79132aad2a40b933d,Tình Yêu Của Mu Bi,2025,16,romance,0.0,0
+680a63049132aad2a40b9631,Cạnh Tranh Thân Thiện,2024,16,drama,0.0,0
+680a63749132aad2a40b9f0b,Once Upon a Time in High School,2004,16,action,2.0,1
+680a63c39132aad2a40ba1ff,"Ăn, Chạy, Yêu",2025,16,romance,0.0,0
+680a64289132aad2a40ba4f3,"Thời Gian Và Anh, Vừa Hay Đúng Lúc",2022,16,romance,0.0,0
+680a645e9132aad2a40ba7e7,Chiếc Bật Lửa Và Váy Công Chúa,2022,16,romance,0.0,0
+680a64b19132aad2a40baadb,Mùa Hè Không Hợp Để Yêu,2023,12,romance,0.0,0
+680a65039132aad2a40badcf,Hậu Lãng - Gen Z,2023,12,drama,3.0,2
+680a65509132aad2a40bb0c3,Trường Tương Tư,2023,12,drama,4.0,1
+680a66139132aad2a40bb811,Hội Bạn Trai Của Bunny,2025,12,comedy,0.0,0
+680a669d9132aad2a40bc0ea,Yêu Tinh,2022,16,comedy,0.0,0
+680a66e89132aad2a40bc3de,Vì sao đưa anh tới,2013,12,romance,0.0,0
+680a67499132aad2a40bc6d2,Nữ Hoàng Nước Mắt,2024,16,drama,0.0,0
+680a67c89132aad2a40bccb9,Mùa Hè Của Hồ Ly,2017,16,romance,0.0,0
+680a68159132aad2a40bcfad,Thám Tử Lừng Danh Conan,2005,12,action,0.0,0
+680a693f9132aad2a40bd2a1,Thám tử lừng danh conan: Chứng cứ đỏ,2021,12,action,0.0,0
+680a69c59132aad2a40bd595,Thám Tử Lừng Danh Conan: Bóng Ma Đường Baker,2002,12,action,0.0,0
+680a6a0d9132aad2a40bd889,Doraemon: Đôi Bạn Thân,2014,,animation,0.0,0
+680a6a519132aad2a40bdb7d,Doraemon: Nobita Và Cuộc Chiến Vũ Trụ Tí Hon,2022,,adventure,0.0,0
+680a6ad29132aad2a40be165,Doraemon: Nobita và bản giao hưởng Địa Cầu,2024,,adventure,0.0,0
+680a6b3a9132aad2a40be459,Doraemon: Đôi Bạn Thân 2,2020,,animation,0.0,0
+680a6bb19132aad2a40be74d,Shin Cậu Bé Bút Chì: Đại Chiến Siêu Năng Lực Sushi Bay,2023,,comedy,0.0,0
+680a6bf29132aad2a40bea41,Crayon Shin-chan : Bùng Nổ ! Cuộc Chiến Quyết Định Suối Nước Nóng Thú Vị,1999,,animation,0.0,0
+680a6c419132aad2a40bed35,Điều Tuyệt Vời Nhất Của Chúng Ta (Bản Điện Ảnh),2019,,romance,0.0,0
+680a6c869132aad2a40bf029,Mùa hè yêu dấu của chúng ta,2021,16,romance,0.0,0
+680a6ccd9132aad2a40bf31d,Na Tra: Ma Đồng Giáng Thế,2019,12,fantasy,4.0,1
+680a6d1c9132aad2a40bf611,Na Tra: Ma Đồng Trở Lại,2024,12,fantasy,0.0,0
+680a6d519132aad2a40bf905,Na Tra 2: Ma Đồng Náo Hải,2025,12,action,0.0,0
+680a6dd39132aad2a40bfbf9,Lời Hồi Đáp 1988-LEE HYE RI,2015,16,comedy,0.0,0
+680a6e6c9132aad2a40bfeed,404 Chạy Ngay Đi,2024,16,horror,0.0,0
+680a6ed69132aad2a40c01e1,M3GAN,2023,16,horror,0.0,0
+680a6f119132aad2a40c0659,Tiếng Vọng Kinh Hoàng,2025,18,thriller,0.0,0
+680a7a3f9132aad2a40c094d,"Boys in Love: Khai Giảng, Trái Tim Học Cách Yêu",2025,18,comedy,0.0,0
+680a7a8d9132aad2a40c0c41,Vườn sao băng (Bản Trung),2018,12,romance,0.0,0
+680a7ae49132aad2a40c180e,Oggy Oggy (Phần 2),2023,,comedy,0.0,0
+680a7b1a9132aad2a40c1b02,Oggy và những chú gián tinh nghịch: Thế hệ kế tiếp,2022,,comedy,0.0,0
+680a7b789132aad2a40c20e9,Cô Bé Lọ Lem,1950,,animation,0.0,0
+680a7bd49132aad2a40c23dd,Nàng Bạch Tuyết và Bảy Chú Lùn,1937,,comedy,0.0,0
+680a7c339132aad2a40c26d1,Nàng Tiên Cá,1989,,animation,0.0,0
+680a7c8c9132aad2a40c2cb8,Cậu Bé Peter Pan,1953,,adventure,0.0,0
+680a7ce49132aad2a40c2fac,Xì Trum,2011,,adventure,0.0,0
+680a7d289132aad2a40c32a0,Đi Tìm Nemo,2003,,animation,0.0,0
+680a7d739132aad2a40c3594,Mr. Bean: The Movie,1997,,comedy,0.0,0
+680a7d989132aad2a40c3888,Mr. Bean's Holiday,2007,,comedy,0.0,0
+680a7e0e9132aad2a40c3b7c,Tài xế ẩn danh,2021,,drama,0.0,0
+680a7e5f9132aad2a40c3e70,Khi Anh Chạy Về Phía Em,2023,16,romance,2.0,1
+680a7e9e9132aad2a40c4164,Khó Dỗ Dành,2025,16,romance,0.0,0
+680a7f319132aad2a40c4458,Vụng Trộm Không Thể Giấu,2023,16,romance,0.0,0

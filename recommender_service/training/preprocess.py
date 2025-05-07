@@ -55,3 +55,13 @@ def compute_training_vectors():
         user_train_vec[ind] = user_vec[user_id_dict[user_id]]
         y_train[ind] = rating
     return user_train_vec, movie_train_vec, y_train
+
+mv, md, _ = compute_movie_vectors()
+
+user_mean = np.load('data/params/user_mean.npy')
+user_std = np.load('data/params/user_std.npy')
+movie_mean = np.load('data/params/movie_mean.npy')
+movie_std = np.load('data/params/movie_std.npy')
+movie_std[movie_std <= 0.05] = 1
+print(movie_std)
+print((mv[md['680530f66e01cc9265f48958']] - movie_mean) / (movie_std))
