@@ -42,8 +42,8 @@
   .info {
     width: 35%;
     position: absolute;
-    left: 150px;
-    bottom: 100px;
+    left: 50px;
+    bottom: 50px;
     color: white;
     font-size: large;
     display: flex;
@@ -51,7 +51,16 @@
     font-family: Tahoma;
     font-weight: 500;
     z-index: 988;
+    opacity: 0;
+    transform: translateX(-110px);
+    animation: fadeDown 0.5s ease-out forwards;
 
+    @keyframes fadeDown {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
     img {
       width: 400px;
     }
@@ -60,7 +69,7 @@
       margin: 20px 0;
       max-height: 100px;
       /* Có thể điều chỉnh theo line-height */
-      background-color: none;
+      background-color: transparent;
       overflow: hidden;
       display: -webkit-box;
       /* Áp dụng line-clamp */
@@ -79,7 +88,7 @@
       button {
         padding: 10px 20px;
         border: none;
-        border-radius: 5px;
+        border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -87,7 +96,15 @@
         font-weight: 500;
         margin-right: 10px;
         cursor: pointer;
+        transition: transform 0.3s ease;
 
+        &:hover{
+          transform: scale(1.1);
+          opacity: 0.8;
+        }
+        &:active{
+          transform: scale(0.9);
+        }
         &.play {
           background-color: white;
           color: var(--main-color);
@@ -104,6 +121,39 @@
       }
     }
   }
+
+  .thumbnail-carousel {
+    position: absolute;
+    bottom: 30px;
+    right: 50px;
+    display: flex;
+    gap: 10px;
+    overflow-x: visible;
+    padding: 10px 0;
+    max-width: 80%;
+    scroll-snap-type: x mandatory;
+    z-index: 990;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    img {
+      width: 80px;
+      height: 40px;
+      border-radius: 6px;
+      object-fit: cover;
+      cursor: pointer;
+      scroll-snap-align: start;
+      border: 2px solid transparent;
+      transition: 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
 }
 
 .film-info-container {
