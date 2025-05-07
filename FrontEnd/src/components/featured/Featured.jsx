@@ -4,7 +4,7 @@ import {useState, useEffect} from "react";
 import axios from "axios";
 import FilmInfo from "../filmInfo/FilmInfo";
 import {Link} from "react-router-dom";
-import {motion} from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 
 export default function Featured({type, setGenre}) {
     const [content, setContent] = useState({});
@@ -48,7 +48,6 @@ export default function Featured({type, setGenre}) {
         return () => clearInterval(interval);
     }, [content, movies]);
 
-
     return (
         <>
             <div className="featured">
@@ -78,30 +77,37 @@ export default function Featured({type, setGenre}) {
                         </select>
                     </div>
                 )}
-                {/*<img src={content.img}/>*/}
-                <motion.img
-                    key={content._id}
-                    src={content.img}
-                    initial={{x: 50, opacity: 0}}
-                    animate={{x: 0, opacity: 1}}
-                    transition={{duration: 0.4, ease: "easeOut"}}
-                />
-                <div className="info">
-                    <img src={content.imgTitle}/>
-                    <span className="desc">{content.desc}</span>
-                    <div className="buttons">
-                        <Link className="link" to={{pathname: "/watch"}} state={{movie: content}}>
-                            <button className="play">
-                                <PlayArrow/>
-                                <span>Play</span>
-                            </button>
-                        </Link>
-                        <button onClick={() => setShowDetail(true)} className="more">
-                            <InfoOutlined/>
-                            <span>Info</span>
-                        </button>
-                    </div>
-                </div>
+                <AnimatePresence mode="wait">
+                    <motion.img
+                        key={content._id}
+                        src={content.img}
+                        initial={{x: 50, opacity: 0}}
+                        animate={{x: 0, opacity: 1}}
+                        transition={{duration: 0.4, ease: "easeOut"}}
+                    />
+                </AnimatePresence>
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={content._id} // Trigger re-animation
+                    >
+                        <div className="info">
+                            <img src={content.imgTitle}/>
+                            <span className="desc">{content.desc}</span>
+                            <div className="buttons">
+                                <Link className="link" to={{pathname: "/watch"}} state={{movie: content}}>
+                                    <button className="play">
+                                        <PlayArrow/>
+                                        <span>Play</span>
+                                    </button>
+                                </Link>
+                                <button onClick={() => setShowDetail(true)} className="more">
+                                    <InfoOutlined/>
+                                    <span>Info</span>
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
 
                 {!type && (
                     <div className="thumbnail-carousel">
