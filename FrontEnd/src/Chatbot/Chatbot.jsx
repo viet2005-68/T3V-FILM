@@ -19,12 +19,12 @@ function Chatbot() {
   const [messages, setMessages] = useState([
     {
       from: "bot",
-      text: "🤖 Xin chào! Mình là T3VMovieBot – bạn cần mình hỗ trợ gì không?",
+      text: "🤖 Hello! I'm T3VMovieBot – How can I help you?",
       source: null,
       suggestedQuestions: [
-        "Giới thiệu về T3V",
-        "Phim hay trên T3V là gì?",
-        "Cách đăng ký tài khoản T3V",
+        "Introduction to T3V",
+        "What are the best romance movies",
+        "How to register for T3V",
       ],
     },
   ]);
@@ -90,10 +90,24 @@ function Chatbot() {
           content: msg.text,
         }));
 
-      const res = await axios.post("http://localhost:8000/chat", {
-        question: text,
-        history,
-      });
+      const res = await axios.post(
+        "http://localhost:5000/chat",
+        {
+          question: text,
+          history,
+        },
+        {
+          headers: {
+            Authorization:
+              "Bearer " + JSON.parse(localStorage.getItem("user")).accessToken,
+          },
+        }
+      );
+
+      console.log(
+        "Token:",
+        JSON.parse(localStorage.getItem("user")).accessToken
+      );
 
       // Handle response
       const { response, source, suggested_questions } = res.data;

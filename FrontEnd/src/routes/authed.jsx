@@ -1,60 +1,71 @@
-import Watch from "../pages/watch/Watch"
-import Authed from "../layouts/Authed"
-import DefaultLayout from "../layouts/DefaultLayout"
-import Home from "../pages/home/Home"
-import Movie from "../pages/movie/Movie"
-import Search from "../pages/search/Search"
-import Profile from "../pages/profile/Profile"
+import Watch from "../pages/watch/Watch";
+import Authed from "../layouts/Authed";
+import DefaultLayout from "../layouts/DefaultLayout";
+import Home from "../pages/home/Home";
+import Movie from "../pages/movie/Movie";
+import Search from "../pages/search/Search";
+import Profile from "../pages/profile/Profile";
+import GenrePage from "../components/genreFilm/GenrePage";
 
 const authed = {
-    element: <Authed />,
-    children: [
+  element: <Authed />,
+  children: [
+    {
+      element: <DefaultLayout />,
+      children: [
         {
-            element: <DefaultLayout />,
-            children: [
-                {
-                    path: "/home",
-                    element: <Home />
-                },
-                {
-                    path: "/series",
-                    element: <Home type={"series"} />
-                },
-                {
-                    path: "/movies",
-                    element: <Home type={"movie"} />
-                }
-            ]
+          path: "/home",
+          element: <Home />,
         },
         {
-            element: <DefaultLayout />,
-            path: '/movie',
-            children: [
-                {
-                    path: ":id",
-                    element: <Movie />
-                }
-            ]
+          path: "/series",
+          element: <Home type={"series"} />,
         },
         {
-            element: <Watch />,
-            path: "/watch"
+          path: "/movies",
+          element: <Home type={"movie"} />,
         },
+      ],
+    },
+    {
+      element: <DefaultLayout />,
+      path: "/movie",
+      children: [
         {
-            element: <Search />,
-            path: "/search"
+          path: ":id",
+          element: <Movie />,
         },
+      ],
+    },
+    {
+      element: <Watch />,
+      path: "/watch",
+    },
+    {
+      element: <Search />,
+      path: "/search",
+    },
+    {
+      element: <DefaultLayout />,
+      path: "/genre",
+      children: [
         {
-            element: <DefaultLayout />,
-            path: '/profile',
-            children: [
-                {
-                    path: "",
-                    element: <Profile />
-                }
-            ]
+          path: ":genre",
+          element: <GenrePage />,
         },
-    ]
-}
+      ],
+    },
+    {
+      element: <DefaultLayout />,
+      path: "/profile",
+      children: [
+        {
+          path: "",
+          element: <Profile />,
+        },
+      ],
+    },
+  ],
+};
 
-export default authed
+export default authed;
