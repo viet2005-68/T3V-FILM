@@ -39,9 +39,9 @@ API_BASE_MOVIES = "http://localhost:8000/api/movies/"
 # Get the LLM from config.py if available, otherwise create a new one
 try:
     from config import llm, memory as global_memory
-    print("✅ Successfully imported LLM and memory from config")
+    print("Successfully imported LLM and memory from config")
 except ImportError:
-    print("⚠️ Could not import from config, creating new LLM and memory")
+    print("Could not import from config, creating new LLM and memory")
     # Fallback LLM
     llm = OllamaLLM(
         model="gemma2:2b",
@@ -77,18 +77,18 @@ try:
     
     # Get ChromaDB collection
     chroma_collection = embedding_manager.get_collection()
-    print("✅ Successfully set up embedding manager")
+    print("Successfully set up embedding manager")
 except ImportError:
-    print("⚠️ Could not import embedding manager, RAG functionality may be limited")
+    print("Could not import embedding manager, RAG functionality may be limited")
     chroma_collection = None
 
 # Import from graph module with error handling
 try:
     # First try to import directly
     from graph import process_query_with_langgraph
-    print("✅ Successfully imported process_query_with_langgraph")
+    print("Successfully imported process_query_with_langgraph")
 except ImportError:
-    print("⚠️ Could not import process_query_with_langgraph directly, attempting dynamic import")
+    print("Could not import process_query_with_langgraph directly, attempting dynamic import")
     
     # Try dynamic import - look for graph.py in the current directory
     graph_path = Path(__file__).parent / "graph.py"
@@ -350,7 +350,7 @@ async def chat(request: ChatRequest, authorization: str = Header(None)):
         access_token = authorization.removeprefix("Bearer ").strip()
         
         # Debug log
-        print(f"🔑 Received token: {access_token[:10]}...")
+        print(f"Received token: {access_token[:10]}...")
         
         # Get or create session memory
         session_id, session_memory = get_session_memory(request.session_id)
@@ -373,7 +373,7 @@ async def chat(request: ChatRequest, authorization: str = Header(None)):
         print(f"Memory contains {len(global_memory.chat_memory.messages)} messages before processing")
         
         # Process query using langgraph with synced memory and token
-        print(f"🔑 Passing token to graph: {access_token[:10]}...")
+        print(f"Passing token to graph: {access_token[:10]}...")
         response = execute_with_langgraph(
             request.question, 
             token=access_token,  # Pass the token here

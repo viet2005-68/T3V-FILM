@@ -29,8 +29,8 @@ def movie_search_by_title(title: str, token: str = None):
         # Thêm xử lý lỗi chi tiết hơn
         try:
             response = requests.get(API_BASE_MOVIES, params={"title": clean_title}, headers=headers, timeout=10)
-            print(f"📡 Response status: {response.status_code}")
-            print(f"📡 Response content: {response.text[:200]}...")  # Print first 200 chars of response
+            print(f"Response status: {response.status_code}")
+            print(f"Response content: {response.text[:200]}...")  # Print first 200 chars of response
             
             # Xử lý các mã trạng thái phổ biến
             if response.status_code == 401:
@@ -52,7 +52,7 @@ def movie_search_by_title(title: str, token: str = None):
                     # Luôn trả về định dạng chuẩn với trường movies 
                     formatted_result = {
                         "total_results": len(result),
-                        "movies": result  # Giới hạn 3 bộ phim đầu tiên
+                        "movies": result[:5]  # Giới hạn 3 bộ phim đầu tiên
                     }
                     return formatted_result
                 else:
@@ -64,7 +64,7 @@ def movie_search_by_title(title: str, token: str = None):
                 if movies:
                     return {
                         "total_results": len(movies),
-                        "movies": movies # Giới hạn 3 bộ phim đầu tiên
+                        "movies": movies[:5] # Giới hạn 3 bộ phim đầu tiên
                     }
                 else:
                     return {"message": f"No movies found for this title {clean_title}.", "total_results": 0, "movies": []}
@@ -95,8 +95,8 @@ def movie_search_by_genre(genre: str, token: str = None):
         # Thêm xử lý lỗi chi tiết hơn
         try:
             response = requests.get(API_BASE_MOVIES, params={"genre": clean_genre}, headers=headers, timeout=10)
-            print(f"📡 Response status: {response.status_code}")
-            print(f"📡 Response content: {response.text[:200]}...")  # Print first 200 chars of response
+            print(f"Response status: {response.status_code}")
+            print(f"Response content: {response.text[:200]}...")  # Print first 200 chars of response
             
             # Xử lý các mã trạng thái phổ biến
             if response.status_code == 401:
@@ -120,7 +120,7 @@ def movie_search_by_genre(genre: str, token: str = None):
                     # Luôn trả về định dạng chuẩn với trường movies 
                     formatted_result = {
                         "total_results": len(result),
-                        "movies": result  # Giới hạn 3 bộ phim đầu tiên
+                        "movies": result[:5]  # Giới hạn 7 bộ phim đầu tiên
                     }
                     return formatted_result
                 else:
@@ -132,7 +132,7 @@ def movie_search_by_genre(genre: str, token: str = None):
                 if movies:
                     return {
                         "total_results": len(movies),
-                        "movies": movies  # Giới hạn 3 bộ phim đầu tiên
+                        "movies": movies[:5]  # Giới hạn 7 bộ phim đầu tiên
                     }
                 else:
                     return {"message": f"No movies found for this genre {clean_genre}.", "total_results": 0, "movies": []}
@@ -153,13 +153,13 @@ def movie_search_by_genre(genre: str, token: str = None):
 def movie_search_top(token: str = None):
     try:
         headers = {"token": f"Bearer {token}"} if token else {}
-        print("🔍 Searching for top movies")
+        print("Searching for top movies")
         
         try:
             # Sử dụng endpoint chính xác cho top movies
             response = requests.get(API_BASE_MOVIES, params={"type": "top"}, headers=headers, timeout=10)
-            print(f"📡 Response status: {response.status_code}")
-            print(f"📡 Response content: {response.text[:200]}...")  # Print first 200 chars of response
+            print(f"Response status: {response.status_code}")
+            print(f"Response content: {response.text[:200]}...")  # Print first 200 chars of response
             
             # Xử lý các mã trạng thái phổ biến
             if response.status_code == 401:
@@ -174,6 +174,7 @@ def movie_search_top(token: str = None):
             for film in result:
                 episodes = len(film['episodes'])
                 del film["episodes"]
+                del film["reviews"]
                 film['episodes'] = episodes
             
             # Đảm bảo định dạng kết quả nhất quán
@@ -181,10 +182,10 @@ def movie_search_top(token: str = None):
                 print(f"List format response with {len(result)} movies")
                 if result:
                     # Giới hạn 5 phim đầu tiên
-                    top_movies = result[:5]
+                    top_movies = result[:7]
                     formatted_result = {
                         "total_results": len(top_movies),
-                        "movies": top_movies
+                        "movies": top_movies[:5]
                     }
                     return formatted_result
                 else:
@@ -195,10 +196,10 @@ def movie_search_top(token: str = None):
                 print(f"Dictionary format response with {len(movies)} movies")
                 if movies:
                     # Giới hạn 5 phim đầu tiên
-                    top_movies = movies[:5]
+                    top_movies = movies[:7]
                     return {
                         "total_results": len(top_movies),
-                        "movies": top_movies
+                        "movies": top_movies[:7]
                     }
                 else:
                     return {"message": "No top movies found.", "total_results": 0, "movies": []}
@@ -218,27 +219,31 @@ def movie_search_top(token: str = None):
 
 def movie_search_by_year(year: str, token: str = None):
     try:
-        year = year.strip()
-        print(f"🔍 Searching for year: '{year}'")
+        # Convert year to string if it's an integer
+        year_str = str(year) if isinstance(year, int) else year
+        
+        # Clean and validate the year
+        year_str = year_str.strip()
+        print(f"Searching for year: '{year_str}'")
         
         # Xác thực token
         headers = {"token": f"Bearer {token}"} if token else {}
         
         # Thêm kiểm tra xem year có phải là số không
-        if not year.isdigit():
-            return {"message": f"Invalid year format: {year}. Please provide a valid year.", "total_results": 0}
+        if not year_str.isdigit():
+            return {"message": f"Invalid year format: {year_str}. Please provide a valid year.", "total_results": 0}
         
         # Thêm xử lý lỗi chi tiết hơn
         try:
-            response = requests.get(API_BASE_MOVIES, params={"year": year}, headers=headers, timeout=10)
-            print(f"📡 Response status: {response.status_code}")
-            print(f"📡 Response content: {response.text[:200]}...")  # Print first 200 chars of response
+            response = requests.get(API_BASE_MOVIES, params={"year": year_str}, headers=headers, timeout=10)
+            print(f"Response status: {response.status_code}")
+            print(f"Response content: {response.text[:200]}...")  # Print first 200 chars of response
             
             # Xử lý các mã trạng thái phổ biến
             if response.status_code == 401:
                 return {"error": "Authentication failed. Invalid token.", "total_results": 0}
             elif response.status_code == 404:
-                return {"message": f"No movies found from year {year}.", "total_results": 0}
+                return {"message": f"No movies found from year {year_str}.", "total_results": 0}
             
             response.raise_for_status()
             result = response.json()
@@ -247,7 +252,6 @@ def movie_search_by_year(year: str, token: str = None):
                 del film["episodes"]
                 film['episodes'] = episodes
                 
-            
             # Đảm bảo định dạng kết quả nhất quán
             if isinstance(result, list):
                 print(f"List format response with {len(result)} movies")
@@ -255,11 +259,11 @@ def movie_search_by_year(year: str, token: str = None):
                     # Luôn trả về định dạng chuẩn với trường movies 
                     formatted_result = {
                         "total_results": len(result),
-                        "movies": result  # Giới hạn 5 bộ phim đầu tiên
+                        "movies": result[:5]  # Giới hạn 5 bộ phim đầu tiên
                     }
                     return formatted_result
                 else:
-                    return {"message": f"No movies found from year {year}.", "total_results": 0, "movies": []}
+                    return {"message": f"No movies found from year {year_str}.", "total_results": 0, "movies": []}
             else:
                 # Xử lý định dạng phản hồi từ điển
                 movies = result.get("movies", [])
@@ -267,14 +271,14 @@ def movie_search_by_year(year: str, token: str = None):
                 if movies:
                     return {
                         "total_results": len(movies),
-                        "movies": movies # Giới hạn 5 bộ phim đầu tiên
+                        "movies": movies[:5] # Giới hạn 5 bộ phim đầu tiên
                     }
                 else:
-                    return {"message": f"No movies found from year {year}.", "total_results": 0, "movies": []}
+                    return {"message": f"No movies found from year {year_str}.", "total_results": 0, "movies": []}
                     
         except requests.Timeout:
-            print(f"Request timed out for year: {year}")
-            return {"error": f"Request timed out while searching for movies from year {year}.", "total_results": 0, "movies": []}
+            print(f"Request timed out for year: {year_str}")
+            return {"error": f"Request timed out while searching for movies from year {year_str}.", "total_results": 0, "movies": []}
             
     except requests.RequestException as e:
         print(f"Error during year search: {e}")
@@ -398,10 +402,10 @@ def movie_search_node(state: AgentState) -> AgentState:
     chat_history = state["chat_history"]
     token = state.get("token")
     
-    print(f"🔑 Token in movie_search_node: {token[:10] if token else 'None'}...")
+    print(f"Token in movie_search_node: {token[:10] if token else 'None'}...")
     
     if not token:
-        print("⚠️ Warning: No token provided for movie search")
+        print("Warning: No token provided for movie search")
     
     # Check for follow-up/contextual movie queries
     is_followup = False
@@ -499,11 +503,12 @@ def movie_search_node(state: AgentState) -> AgentState:
     
     Trích xuất:
     1. Tên phim (nếu có)
-    2. Thể loại (nếu có)
+    2. Thể loại (nếu có) lưu ý: Bạn có thể tìm sự tương đồng với các thể loại phim trong danh sách thể loại sau  ["Action","Adventure","Comedy","Crime","Fantasy","Historical","Horror","Romance","Sci-fi","Thriller","Western","Animation","Drama","Documentary"] nếu có sự tương đồng
+    trả về đúng thể loại phim  có trong list trên còn không thì giữ nguyên;
     3. Năm phát hành (nếu có) - chú ý các cụm từ như "phim năm X", "phim ra mắt X", "phim X", "năm X"
     4. Diễn viên (nếu có)
     5. Đạo diễn (nếu có)
-    6. URL của phim (nếu có)
+    6. URL của phim (nếu có) 
     7. Top phim - chú ý các cụm từ như "top phim", "phim hot", "phim trending", "phim hay nhất"
     
     Trả về định dạng JSON với các khóa: "title", "genre", "year", "actor", "director", "search_type".

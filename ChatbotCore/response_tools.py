@@ -152,10 +152,11 @@ def unified_answer_synthesizer_node(state: AgentState) -> AgentState:
                    - Năm phát hành (nếu có)
                    - Thời lượng (nếu có)
                    - Mô tả ngắn (nếu có)
+                   - Nếu hiện ảnh thì ảnh chỉ có kích thước tối đa là 64x64 px
                    - LINK CHI TIẾT (BẮT BUỘC): Sử dụng định dạng chính xác [Tiêu đề phim](http://localhost:5173/movie/ID_PHIM)
                      trong đó ID_PHIM là giá trị _id từ dữ liệu phim
                 
-                2. Ví dụ định dạng chuẩn cho MỖI bộ phim:
+                2. Ví dụ định dạng PHẢI CÓ VÀ chuẩn cho MỖI bộ phim:
                    **Tên phim**
                    - Thể loại: [thể loại] (nếu có)
                    - Năm phát hành: [năm] (nếu có)
@@ -181,8 +182,11 @@ def unified_answer_synthesizer_node(state: AgentState) -> AgentState:
             4. Nếu đây là câu hỏi tiếp theo của các câu hỏi trước đó, duy trì tính liên tục
             5. Nêu bật các điểm chính và trả lời một cách ngắn gọn
             6. Trả lời bằng cùng ngôn ngữ với câu hỏi của người dùng (tiếng Việt hoặc tiếng Anh)
-            7. Thêm "Nguồn: Web + Kiến thức" ở cuối và chú thích cơ sở dữ liệu của T3V không có thông tin mà bạn đang tìm
-                thông tin bạn đang tìm được tìm trên web và phụ thuộc vào bên thứ 3
+            7. Thêm cảnh báo sau đây vào đầu câu trả lời và điều này là BẮT BUỘC VỚI CÂU TRẢ LỜI:
+               *CÂU HỎI CỦA BẠN DỰA VÀO WEB SEARCH CỦA BÊN THỨ BA CÂU TRẢ LỜI CÓ THỂ SAI*
+            8. Thêm "Nguồn: Web + Kiến thức" ở cuối và chú thích cơ sở dữ liệu của T3V không có thông tin mà bạn đang tìm
+               thông tin bạn đang tìm được tìm trên web và phụ thuộc vào bên thứ 3
+            9. Từ chối trả lời câu hỏi liên quan đến phim khi câu hỏi không liên quan đến phim và các dịch vụ của web T3V
             """
 
     # Gọi LLM để tổng hợp câu trả lời
@@ -211,22 +215,30 @@ def unified_answer_synthesizer_node(state: AgentState) -> AgentState:
         if is_vietnamese:
             if "nguồn:" not in final_answer.lower() and "source:" not in final_answer.lower():
                 if is_multi_source:
-                    final_answer += "\n\nNguồn: T3V Database + Web"
+                    final_answer += "\n\nNguồn: Web + Kiến thức"
                 elif classification == "SERVICE":
-                    final_answer += "\n\nNguồn: VectorDB"
+                    final_answer += "\n\nNguồn: T3V Database"
                 elif classification == "MOVIE" and not web_fallback:
                     final_answer += "\n\nNguồn: T3V Database"
                 else:
+                    # Thêm cảnh báo cho web search
+                    warning = "\n\n*CÂU HỎI CỦA BẠN DỰA VÀO WEB SEARCH CỦA BÊN THỨ BA CÂU TRẢ LỜI CÓ THỂ SAI*\n\n"
+                    if warning not in final_answer:
+                        final_answer = warning + final_answer
                     final_answer += "\n\nNguồn: Web + Kiến thức"
         else:
             if "source:" not in final_answer.lower() and "nguồn:" not in final_answer.lower():
                 if is_multi_source:
-                    final_answer += "\n\nSource: T3V Database + Web"
+                    final_answer += "\n\nSource: Web + Knowledge"
                 elif classification == "SERVICE":
-                    final_answer += "\n\nSource: VectorDB"
+                    final_answer += "\n\nSource: T3V Database"
                 elif classification == "MOVIE" and not web_fallback:
                     final_answer += "\n\nSource: T3V Database"
                 else:
+                    # Add warning for web search
+                    warning = "\n\n*YOUR QUESTION IS BASED ON THIRD-PARTY WEB SEARCH RESULTS MAY BE INACCURATE*\n\n"
+                    if warning not in final_answer:
+                        final_answer = warning + final_answer
                     final_answer += "\n\nSource: Web + Knowledge"
         
         # Kiểm tra xác minh cuối cùng cho liên kết phim - sửa lỗi khẩn cấp nếu vẫn còn thiếu liên kết
@@ -236,7 +248,7 @@ def unified_answer_synthesizer_node(state: AgentState) -> AgentState:
                 movies = movie_results["movies"]
                 if isinstance(movies, list) and len(movies) > 0:
                     # Thêm ghi chú về liên kết bị thiếu và nối chúng
-                    final_answer += "\n\n⚠️ Link chi tiết phim:\n"
+                    final_answer += "\n\n Link chi tiết phim:\n"
                     for movie in movies:
                         if isinstance(movie, dict) and "_id" in movie and "title" in movie:
                             movie_id = movie["_id"]
@@ -270,6 +282,7 @@ def self_correct_response(question, initial_response, intent, history=""):
         movie_link_instructions = """
         SPECIAL VERIFICATION FOR MOVIE RESPONSES:
         - Every movie MUST have a clickable link to its details page
+        - Every movie MUST have description and you MUST add description to the response
         - Each link MUST be formatted exactly as IF film has id: [Movie Title](http://localhost:5173/movie/MOVIE_ID)
         - If ANY movie is missing its link, this is a CRITICAL ERROR that must be fixed
         - If you don't see movie IDs in the response, add a note that links are missing

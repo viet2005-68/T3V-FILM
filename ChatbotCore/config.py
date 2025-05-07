@@ -14,7 +14,7 @@ load_dotenv()
 API_BASE_MOVIES = "http://localhost:8800/api/movies/"
 
 # LLM configuration
-# llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL"))
+#llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7, api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL"))
 # llm = OllamaLLM(
 #         model="gemma:2b",
 #         temperature=0.7,
@@ -22,7 +22,7 @@ API_BASE_MOVIES = "http://localhost:8800/api/movies/"
 #         num_predict=512,
 #     )
 # Global chat history as list
-llm = ChatGroq(model="gemma2-9b-it", temperature=0.5, api_key=os.getenv("GROQ_API_KEY"))
+llm = ChatGroq(model="gemma2-9b-it", temperature=0.7, api_key=os.getenv("GROQ_API_KEY"))
 chat_history = []
 
 # Memory for integration with chat_graphapi.py
