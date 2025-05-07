@@ -1,6 +1,6 @@
 import json
 from langgraph.graph import END, StateGraph
-from typing import Dict, Any, List
+from typing import Dict, Any
 from state import AgentState, convert_message_to_dict
 from classifier import classify_node, context_aware_router
 from service_tools import service_rag_node
@@ -22,21 +22,9 @@ def build_agent_graph():
     workflow.add_node("synthesizer", unified_answer_synthesizer_node)
 
     # Define initial routing from classifier with added ReAct support for low confidence
-    def router(state):
-        # Preserve token in state
-        token = state.get("token")
-        print(f"🔑 Token in router: {token[:10] if token else 'None'}...")
-        if token:
-            state["token"] = token
-            
-        # Route based on classification
-        if state["classification"].get("confidence", "medium") in ["low", "very low"]:
-            return "react_node"
-        return context_aware_router(state)
-
     workflow.add_conditional_edges(
         "classifier",
-        router,
+        lambda state: "react_node" if state["classification"].get("confidence", "medium") in ["low", "very low"] else context_aware_router(state),
         {
             "service_node": "service_node",
             "movie_node": "movie_node",
@@ -46,20 +34,10 @@ def build_agent_graph():
     )
     
     # Add conditional edges from movie_node based on search results
-    def movie_router(state):
-        # Preserve token in state
-        token = state.get("token")
-        if token:
-            state["token"] = token
-            
-        # Route based on search results
-        if state["movie_results"].get("web_fallback", False):
-            return "synthesizer"
-        return "synthesizer"
-
+    # If the movie search required fallback to web search, route to the synthesizer directly
     workflow.add_conditional_edges(
         "movie_node",
-        movie_router,
+        lambda state: "synthesizer" if state["movie_results"].get("web_fallback", False) else "synthesizer",
         {
             "synthesizer": "synthesizer"
         }
@@ -80,14 +58,12 @@ def build_agent_graph():
 
 
 # In graph.py
-def process_query_with_langgraph(query: str, history: List[Dict[str, Any]], token: str = None) -> str:
+def process_query_with_langgraph(query: str) -> str:
     """
     Process a user query with the LangGraph workflow.
     
     Args:
         query: The user's query text
-        history: Chat history
-        token: Authentication token
         
     Returns:
         The final answer from the agent
@@ -96,8 +72,6 @@ def process_query_with_langgraph(query: str, history: List[Dict[str, Any]], toke
         return "Vui lòng nhập câu hỏi hợp lệ."
     
     try:
-        print(f"🔑 Token in process_query_with_langgraph: {token[:10] if token else 'None'}...")
-        
         # Import memory directly to ensure we use the same object
         from config import memory
         
@@ -112,34 +86,22 @@ def process_query_with_langgraph(query: str, history: List[Dict[str, Any]], toke
                 elif isinstance(msg, AIMessage):
                     messages.append({"role": "ai", "content": msg.content})
         
-        # Create initial state with the extracted chat history and token
-        state_dict = {
+        # Create initial state with the extracted chat history
+        initial_state = {
             "messages": messages,
             "query": query,
             "classification": {},
             "retrieved_documents": [],
             "movie_results": {},
             "final_answer": "",
-            "chat_history": messages,  # Use the extracted messages
+            "chat_history": messages  # Use the extracted messages
         }
-        
-        # Add token if provided
-        if token:
-            state_dict["token"] = token
-            
-        # Create AgentState instance
-        initial_state = AgentState(state_dict)
-        
-        print(f"🔑 Token in initial_state: {initial_state.get('token', '')[:10] if initial_state.get('token') else 'None'}...")
         
         # Get the graph
         graph = build_agent_graph()
         
-        # Execute the graph with explicit state passing
+        # Execute the graph
         result = graph.invoke(initial_state)
-        
-        # Verify token in result
-        print(f"🔑 Token in result: {result.get('token', '')[:10] if result.get('token') else 'None'}...")
         
         return result["final_answer"]
     
@@ -147,11 +109,9 @@ def process_query_with_langgraph(query: str, history: List[Dict[str, Any]], toke
         print(f"Error processing query: {e}")
         return f"Xin lỗi, đã xảy ra lỗi khi xử lý câu hỏi của bạn: {str(e)}"
 
-def execute_with_langgraph(query, token: str = None, memory=None):
+def execute_with_langgraph(query):
     """Main execution loop for the chatbot with LangGraph."""
-    global chat_history
-    
-    print(f"🔑 Token in execute_with_langgraph: {token[:10] if token else 'None'}...")
+    global chat_history, memory
     
     if query.strip().lower() in ["exit", "quit", "thoát"]:
         print("👋 Tạm biệt!")
@@ -159,13 +119,12 @@ def execute_with_langgraph(query, token: str = None, memory=None):
     
     if query.strip().lower() in ["reset", "clear", "xóa"]:
         chat_history = []
-        if memory:
-            memory.clear()
+        memory.clear()
         print("🧹 Đã xóa lịch sử chat.")
         return "Đã xóa lịch sử chat."
     
     # Extract chat history from memory if it's being used
-    if memory and hasattr(memory, 'chat_memory') and hasattr(memory.chat_memory, 'messages'):
+    if hasattr(memory, 'chat_memory') and hasattr(memory.chat_memory, 'messages'):
         # Convert memory messages to chat_history format
         from langchain_core.messages import HumanMessage, AIMessage
         
@@ -180,16 +139,15 @@ def execute_with_langgraph(query, token: str = None, memory=None):
         if temp_history and len(temp_history) > len(chat_history):
             chat_history = temp_history
     
-    # Process the query using chat_history and token
-    response = process_query_with_langgraph(query, chat_history, token)
+    # Process the query using chat_history
+    response = process_query_with_langgraph(query, chat_history)
     
     # Update both chat_history and memory for consistency
     chat_history.append({"role": "human", "content": query})
     chat_history.append({"role": "ai", "content": response})
     
     # Update memory to stay in sync with chat_history
-    if memory:
-        memory.chat_memory.add_user_message(query)
-        memory.chat_memory.add_ai_message(response)
+    memory.chat_memory.add_user_message(query)
+    memory.chat_memory.add_ai_message(response)
     
     return response

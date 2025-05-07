@@ -8,7 +8,6 @@ class AgentState(TypedDict):
     movie_results: Dict[str, Any]
     final_answer: str
     chat_history: List[Dict[str, Any]]
-    token: str
 
 def convert_message_to_dict(message):
     """Convert LangChain message objects to dictionaries with role and content."""
