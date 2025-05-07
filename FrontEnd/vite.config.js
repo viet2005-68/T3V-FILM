@@ -12,7 +12,10 @@ export default defineConfig({
                 secure: false,
             },
             '/recommender': {
-                target: 'http://localhost:8000'
+                // target: 'http://localhost:8000',
+                target: 'https://1572-116-96-45-20.ngrok-free.app',
+                changeOrigin: true,
+                secure: false,
             }
         },
         watch: {
