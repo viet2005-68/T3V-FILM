@@ -7,7 +7,7 @@ export default function Topbar() {
             <div className="topbarWrapper">
                 <div className="topLeft">
                     <span className="logo">
-                        Netflix Admin
+                        T3V Admin
                     </span>
                 </div>
                 <div className="topRight">

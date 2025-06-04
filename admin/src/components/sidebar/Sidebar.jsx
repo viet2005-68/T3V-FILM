@@ -19,7 +19,7 @@ export default function Sidebar() {
                         </Link>
                         <li className="sidebarListItem">
                             <Timeline className="sidebarIcon" />
-                            Anylytics
+                            Analytics
                         </li>
                         <li className="sidebarListItem">
                             <Timeline className="sidebarIcon" />
