@@ -1,7 +1,7 @@
 # ChatbotCore
 
 ## Overview
-ChatbotCore is the Python backend that powers the T3V chatbot. It classifies user intent, routes requests through a LangGraph workflow, retrieves knowledge-base content with RAG, queries the movie catalog API, and synthesizes final answers for the client apps.
+ChatbotCore is the Python backend that powers the T3V chatbot. It classifies user intent, routes requests through a LangGraph workflow, retrieves knowledge base content with RAG, queries the movie catalog API, and synthesizes final answers for the client apps.
 
 ## Key responsibilities
 - **Intent classification** for SERVICE vs MOVIE vs OTHER queries.
